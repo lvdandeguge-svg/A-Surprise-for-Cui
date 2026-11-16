@@ -234,6 +234,10 @@
 <canvas id="sky"></canvas>
 <div class="aurora"><i></i><i></i><i></i><i></i></div>
 <canvas id="fx"></canvas>
+
+<!-- ====== BGM: Dear John (slow ambient instrumental) ====== -->
+<audio id="bgmAudio" src="Dear%20John.mp3" loop preload="auto"></audio>
+<button id="bgmBtn" aria-label="bgm" style="position:fixed;right:18px;bottom:18px;z-index:9999;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.55);backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(200,110,120,.35);font-size:22px;line-height:48px;text-align:center;padding:0;cursor:pointer;transition:transform .2s,background .3s;-webkit-tap-highlight-color:transparent;">🎵</button>
 <main>
 
   <!-- 第0幕 邀请函 -->
@@ -848,6 +852,38 @@ function finaleStart(){
   setTimeout(()=>document.getElementById('endMark').classList.add('in'), delay + 1600);
   setTimeout(()=>document.getElementById('footBox').classList.add('in'), delay + 2600);
 }
+
+/* ---------- BGM player: Dear John slow ambient ---------- */
+(function(){
+  var bgm = document.getElementById('bgmAudio');
+  var btn = document.getElementById('bgmBtn');
+  var started = false;
+  bgm.volume = 0.35;
+  btn.textContent = '🔇';
+
+  function startPlay(){
+    if (started) return;
+    var p = bgm.play();
+    if (p && p.then) {
+      p.then(function(){ started = true; btn.textContent = '🎵'; }).catch(function(){});
+    }
+  }
+
+  document.addEventListener('pointerdown', function first(){
+    startPlay();
+    document.removeEventListener('pointerdown', first);
+  }, { once:true });
+
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if (bgm.paused) {
+      bgm.play().then(function(){ started = true; btn.textContent = '🎵'; }).catch(function(){});
+    } else {
+      bgm.pause();
+      btn.textContent = '🔇';
+    }
+  });
+})();
 
 /* ---------- 启动:恢复进度(放最后) ---------- */
 (function boot(){
