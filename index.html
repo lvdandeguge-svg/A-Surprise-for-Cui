@@ -156,7 +156,7 @@
   #cakeBox { position:relative; z-index:3; margin:1.5vh 0 .6vh; display:flex; justify-content:center; }
   #s3 h2, #s3 p.sub, #s3 .blowMeter, #s3 #wishBox, #s3 #cakeBtnBox { position:relative; z-index:3; }
   .cakeStage { position:relative; display:inline-block; touch-action:pan-y; }
-  .cakeSvg { display:block; height:min(32vh,252px); width:auto; max-width:86vw; overflow:visible; }
+  .cakeSvg { display:block; height:min(44vh,340px); width:auto; max-width:92vw; overflow:visible; }
   .scene.active .cakeStage { animation:cakeIn 1.05s cubic-bezier(.2,1.5,.4,1) both; }
   @keyframes cakeIn { from{transform:scale(.55) translateY(38px); opacity:0} to{transform:none; opacity:1} }
   #cakeFx { position:absolute; inset:0; pointer-events:none; z-index:6; }
@@ -168,7 +168,8 @@
   .candle { cursor:pointer; }
   .candle .hot { pointer-events:all; }
   .candle .ndigit { font-size:60px; font-weight:800; letter-spacing:-2px; }
-  .candle.tap { animation:cdTap .42s ease; }
+  .candleInner { transform-box:fill-box; transform-origin:50% 100%; }
+  .candleInner.tap { animation:cdTap .42s ease; }
   @keyframes cdTap { 0%,100%{transform:translateY(0) rotate(0)} 25%{transform:translateY(-3px) rotate(-3.5deg)} 60%{transform:translateY(0) rotate(3deg)} }
   .flame { transform-box:fill-box; transform-origin:50% 100%; animation:flick .3s ease-in-out infinite alternate; }
   .halo { transition:opacity .5s ease; }
@@ -223,7 +224,7 @@
   /* 火焰随音量摇曳 */
   .flame.wild { animation:flickWild .16s ease-in-out infinite alternate; }
   @keyframes flickWild { from{transform:scale(.82,1.18) rotate(-9deg)} to{transform:scale(1.22,.86) rotate(9deg)} }
-  .candle.pop { animation:candlePop .5s cubic-bezier(.2,1.6,.3,1); }
+  .candleInner.pop { animation:candlePop .5s cubic-bezier(.2,1.6,.3,1); }
   @keyframes candlePop { 0%{transform:translateY(0)} 40%{transform:translateY(-9px)} 100%{transform:translateY(0)} }
   #toppings { cursor:pointer; }
   #toppings .hotberry { pointer-events:all; }
@@ -371,7 +372,7 @@
     <div id="cakeBox">
       <div class="cakeStage" id="cakeStage">
         <div class="candleGlow" id="candleGlow"></div>
-        <svg class="cakeSvg" id="cakeSvg" viewBox="0 0 340 322" xmlns="http://www.w3.org/2000/svg" aria-label="生日蛋糕">
+        <svg class="cakeSvg" id="cakeSvg" viewBox="-14 0 340 322" xmlns="http://www.w3.org/2000/svg" aria-label="生日蛋糕">
           <defs>
             <linearGradient id="gPlate" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#fffdf9"/><stop offset=".5" stop-color="#efe1d5"/><stop offset="1" stop-color="#c9b2a1"/>
@@ -459,9 +460,11 @@
 
           <!-- 一刀之后：切口 + 切下的一块 -->
           <g id="cutFace" opacity="0">
-            <path d="M160,100 C158,150 162,220 160,272" stroke="#a9556e" stroke-width="3" fill="none" opacity=".35" stroke-linecap="round"/>
-            <path d="M151,101 L160,114 L169,101 Z" fill="#fffaf2"/>
-            <path d="M160,168 q7,-9 14,0 q-7,9 -14,0 z" fill="#ff7f9e" opacity=".8"/>
+            <path d="M92,166 Q160,159 230,167" stroke="#f6d3ba" stroke-width="7.5" fill="none" stroke-linecap="round" opacity=".95"/>
+            <path d="M96,163 Q160,156 226,164" stroke="#fffaf0" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".9"/>
+            <path d="M92,169 Q160,162 230,170" stroke="#c98a86" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".55"/>
+            <path d="M206,159 L232,166 L208,175 Z" fill="#fff3e6" stroke="#e0a8b6" stroke-width="1" opacity=".92"/>
+            <circle cx="221" cy="166" r="3.4" fill="#ff7f9e" opacity=".75"/>
           </g>
           <g id="slicePiece" opacity="0">
             <ellipse cx="289" cy="296" rx="44" ry="7.5" fill="rgba(150,80,80,.18)"/>
@@ -480,31 +483,35 @@
 
           <!-- 数字蜡烛 1 9 -->
           <g id="candles">
-            <g class="candle" id="nc1" transform="translate(138,0)">
-              <rect class="hot" x="-16" y="24" width="32" height="88" rx="10" fill="transparent"/>
-              <line x1="0" y1="58" x2="0" y2="49" stroke="#8a5a4a" stroke-width="2.6" stroke-linecap="round"/>
-              <circle class="wickGlow" cx="0" cy="50" r="4" fill="#ffd27a" opacity="0"/>
-              <g transform="translate(0,48)">
-                <ellipse class="halo" cx="0" cy="-16" rx="21" ry="27" fill="url(#gHalo)"/>
-                <g class="flame">
-                  <path d="M0,0 C9,-5 11,-15 0,-31 C-11,-15 -9,-5 0,0 Z" fill="url(#gFlame)"/>
-                  <path d="M0,-3 C5,-7 5,-14 0,-21 C-5,-14 -5,-7 0,-3 Z" fill="#fffbd6"/>
+            <g class="candle" id="nc1" transform="translate(132,0)">
+              <g class="candleInner">
+                <rect class="hot" x="-26" y="14" width="52" height="112" rx="12" fill="transparent"/>
+                <line x1="0" y1="56" x2="0" y2="44" stroke="#8a5a4a" stroke-width="3.2" stroke-linecap="round"/>
+                <circle class="wickGlow" cx="0" cy="45" r="5" fill="#ffd27a" opacity="0"/>
+                <g transform="translate(0,44) scale(1.24)">
+                  <ellipse class="halo" cx="0" cy="-16" rx="22" ry="28" fill="url(#gHalo)"/>
+                  <g class="flame">
+                    <path d="M0,0 C9,-5 11,-15 0,-31 C-11,-15 -9,-5 0,0 Z" fill="url(#gFlame)"/>
+                    <path d="M0,-3 C5,-7 5,-14 0,-21 C-5,-14 -5,-7 0,-3 Z" fill="#fffbd6"/>
+                  </g>
                 </g>
+                <text class="ndigit" x="0" y="104" text-anchor="middle" fill="url(#gCandle)" stroke="#f4a7bd" stroke-width=".8" filter="url(#fDigit)" style="font-size:78px;font-weight:800;font-family:'PingFang SC','Microsoft YaHei',sans-serif">1</text>
               </g>
-              <text class="ndigit" x="0" y="106" text-anchor="middle" fill="url(#gCandle)" stroke="#f4a7bd" stroke-width=".7" filter="url(#fDigit)" style="font-size:58px;font-weight:800;font-family:'PingFang SC','Microsoft YaHei',sans-serif">1</text>
             </g>
-            <g class="candle" id="nc2" transform="translate(184,0)">
-              <rect class="hot" x="-16" y="24" width="32" height="88" rx="10" fill="transparent"/>
-              <line x1="0" y1="58" x2="0" y2="49" stroke="#8a5a4a" stroke-width="2.6" stroke-linecap="round"/>
-              <circle class="wickGlow" cx="0" cy="50" r="4" fill="#ffd27a" opacity="0"/>
-              <g transform="translate(0,48)">
-                <ellipse class="halo" cx="0" cy="-16" rx="21" ry="27" fill="url(#gHalo)"/>
-                <g class="flame">
-                  <path d="M0,0 C9,-5 11,-15 0,-31 C-11,-15 -9,-5 0,0 Z" fill="url(#gFlame)"/>
-                  <path d="M0,-3 C5,-7 5,-14 0,-21 C-5,-14 -5,-7 0,-3 Z" fill="#fffbd6"/>
+            <g class="candle" id="nc2" transform="translate(190,0)">
+              <g class="candleInner">
+                <rect class="hot" x="-26" y="14" width="52" height="112" rx="12" fill="transparent"/>
+                <line x1="0" y1="56" x2="0" y2="44" stroke="#8a5a4a" stroke-width="3.2" stroke-linecap="round"/>
+                <circle class="wickGlow" cx="0" cy="45" r="5" fill="#ffd27a" opacity="0"/>
+                <g transform="translate(0,44) scale(1.24)">
+                  <ellipse class="halo" cx="0" cy="-16" rx="22" ry="28" fill="url(#gHalo)"/>
+                  <g class="flame">
+                    <path d="M0,0 C9,-5 11,-15 0,-31 C-11,-15 -9,-5 0,0 Z" fill="url(#gFlame)"/>
+                    <path d="M0,-3 C5,-7 5,-14 0,-21 C-5,-14 -5,-7 0,-3 Z" fill="#fffbd6"/>
+                  </g>
                 </g>
+                <text class="ndigit" x="0" y="104" text-anchor="middle" fill="url(#gCandle)" stroke="#f4a7bd" stroke-width=".8" filter="url(#fDigit)" style="font-size:78px;font-weight:800;font-family:'PingFang SC','Microsoft YaHei',sans-serif">9</text>
               </g>
-              <text class="ndigit" x="0" y="106" text-anchor="middle" fill="url(#gCandle)" stroke="#f4a7bd" stroke-width=".7" filter="url(#fDigit)" style="font-size:58px;font-weight:800;font-family:'PingFang SC','Microsoft YaHei',sans-serif">9</text>
             </g>
           </g>
         </svg>
@@ -1065,7 +1072,7 @@ function startHold(){
   if(candlesOut) return;
   const bar = document.getElementById('blowBar'), meter = document.getElementById('blowMeter');
   holdVal = 0; meter.classList.remove('full');
-  document.getElementById('nc1').classList.add('tap'); document.getElementById('nc2').classList.add('tap');
+  document.querySelector('#nc1 .candleInner').classList.add('tap'); document.querySelector('#nc2 .candleInner').classList.add('tap');
   holdTimer = setInterval(()=>{
     holdVal += 4.2;
     bar.style.width = Math.min(100, holdVal) + '%';
@@ -1078,7 +1085,7 @@ function startHold(){
 }
 function endHold(){
   if(holdTimer){ clearInterval(holdTimer); holdTimer = null; }
-  ['nc1','nc2'].forEach(id=> document.getElementById(id).classList.remove('tap'));
+  ['nc1','nc2'].forEach(id=> document.querySelector('#'+id+' .candleInner').classList.remove('tap'));
   if(!candlesOut){
     const bar = document.getElementById('blowBar');
     if(parseFloat(bar.style.width) < 100) bar.style.width = '0%';
@@ -1139,7 +1146,7 @@ function blowAll(){
     setTimeout(()=>{
       el.classList.add('out');
       const r = cfx.getBoundingClientRect();
-      const cx = (id === 'nc1' ? 138 : 184) / 340 * r.width;
+      const cx = ((id === 'nc1' ? 132 : 190) + 14) / 340 * r.width;
       const cy = 44 / 322 * r.height;
       burst(cx, cy, 16, 'smoke', { spd:.5, g:-.012, life:70, r:3, up:.5, jitter:5 });
     }, k*200);
@@ -1387,29 +1394,33 @@ function finaleStart(){
 (function(){
   var bgm = document.getElementById('bgmAudio');
   var btn = document.getElementById('bgmBtn');
-  var started = false;
+  var started = false, muted = false;
   bgm.volume = 0.35;
   btn.textContent = '🔇';
 
-  function startPlay(){
-    if (started) return;
+  function load(){ if (!bgm.getAttribute('src')) bgm.setAttribute('src', 'Dear%20John.mp3'); }
+  function play(){
+    load();
     var p = bgm.play();
-    if (p && p.then) {
-      p.then(function(){ started = true; btn.textContent = '🎵'; }).catch(function(){});
+    if (p && p.then) p.then(function(){ started = true; if (!muted) btn.textContent = '🎵'; }).catch(function(){});
+  }
+  function pause(){ bgm.pause(); btn.textContent = '🔇'; }
+
+  // 背景音乐改为：第一次点击任意互动按钮时开始播放
+  function onFirst(e){
+    var t = e.target;
+    if (t && t.closest && t.closest('.btn, .opt, button, input, [role="button"]')){
+      play();
+      document.removeEventListener('pointerdown', onFirst, true);
     }
   }
+  document.addEventListener('pointerdown', onFirst, true);
 
-  // 首次进入不自动放声音：想听时点右下角的音符
-  bgm.setAttribute('src', 'Dear%20John.mp3');
-
+  // 右下角音符：随时手动开 / 关
   btn.addEventListener('click', function(e){
     e.stopPropagation();
-    if (bgm.paused) {
-      bgm.play().then(function(){ started = true; btn.textContent = '🎵'; }).catch(function(){});
-    } else {
-      bgm.pause();
-      btn.textContent = '🔇';
-    }
+    if (bgm.paused) { muted = false; play(); }
+    else { muted = true; pause(); }
   });
 })();
 
