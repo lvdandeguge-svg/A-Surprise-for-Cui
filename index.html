@@ -215,6 +215,7 @@
   #realCakeSvg.show {
     display:block; animation:realCakeIn 1.05s cubic-bezier(.18,.95,.28,1.08) both;
   }
+  #realNumberCandles { cursor:pointer; touch-action:none; user-select:none; -webkit-user-select:none; }
   @keyframes realCakeIn {
     0% { opacity:0; transform:translateY(28px) scale(.9); filter:blur(7px); }
     65% { opacity:1; transform:translateY(-5px) scale(1.012); filter:blur(0); }
@@ -240,6 +241,14 @@
   .candle.out .halo { opacity:0; }
   .candle.out .ndigit { fill:#c3b3bd; stroke:#a08d99; }
   .candle.out .wicks { opacity:1; }
+  #realNumberCandles.extinguishShake { animation:candleHaptic .48s ease both; }
+  @keyframes candleHaptic {
+    0%,100% { transform:translateX(0); }
+    18% { transform:translateX(-2.5px) rotate(-.8deg); }
+    38% { transform:translateX(2.2px) rotate(.7deg); }
+    58% { transform:translateX(-1.4px); }
+    78% { transform:translateX(1px); }
+  }
   .wickGlow { transform-box:fill-box; transform-origin:50% 50%; }
   .candle.out .wickGlow { animation:wick .9s ease forwards; }
   @keyframes wick { 0%{opacity:.95; transform:scale(1.7)} 35%{opacity:.7} 100%{opacity:0; transform:scale(.5)} }
@@ -928,20 +937,49 @@
             <path d="M194 151 l5 -4 6 3 -5 5 Z" fill="url(#rGold)"/>
           </g>
 
-          <!-- 金色蜡烛 -->
-          <g id="realCandle" filter="url(#rShadow)">
-            <ellipse cx="180" cy="158" rx="12" ry="4" fill="#9c6b30" opacity=".24"/>
-            <line x1="180" y1="89" x2="180" y2="76" stroke="#5f3921" stroke-width="2.2" stroke-linecap="round"/>
-            <g transform="translate(180 82) scale(1.1)">
-              <ellipse cx="0" cy="-17" rx="24" ry="29" fill="#ffd57c" opacity=".15" filter="url(#rSoft)"/>
-              <g class="flame">
-                <path d="M0 0 C9 -6 10 -16 0 -34 C-10 -17 -9 -6 0 0 Z" fill="url(#rFlame)"/>
-                <path d="M0 -4 C4.5 -8 5 -15 0 -22 C-5 -15 -4.5 -8 0 -4 Z" fill="#fffbd7"/>
+          <!-- 金色“19”数字蜡烛，每组都有独立火焰与透明触摸热区 -->
+          <g id="realNumberCandles" filter="url(#rShadow)">
+            <ellipse cx="180" cy="157" rx="42" ry="6" fill="#9c6b30" opacity=".19"/>
+            <g class="candle realNumberCandle" id="rn1">
+              <g class="candleInner">
+                <rect class="hot" x="136" y="75" width="52" height="88" rx="18" fill="transparent" pointer-events="all"/>
+                <line x1="159" y1="102" x2="159" y2="91" stroke="#644022" stroke-width="2.1" stroke-linecap="round"/>
+                <circle class="wickGlow" cx="159" cy="91" r="5.2" fill="#ffd27a" opacity="0"/>
+                <g transform="translate(159 96) scale(.76)">
+                  <ellipse class="halo" cx="0" cy="-17" rx="24" ry="30" fill="url(#gHalo)"/>
+                  <g class="flame">
+                    <path d="M0 0 C9 -6 10 -16 0 -34 C-10 -17 -9 -6 0 0 Z" fill="url(#rFlame)"/>
+                    <path d="M0 -4 C4.5 -8 5 -15 0 -22 C-5 -15 -4.5 -8 0 -4 Z" fill="#fffbd7"/>
+                  </g>
+                </g>
+                <text class="ndigit realNumDigit" x="159" y="151" text-anchor="middle"
+                  font-family="Georgia,'Times New Roman',serif" font-size="68" font-weight="900"
+                  fill="url(#rGold)" stroke="#9c621c" stroke-width="1.2" paint-order="stroke fill">1</text>
+                <text x="158.3" y="150.3" text-anchor="middle" pointer-events="none"
+                  font-family="Georgia,'Times New Roman',serif" font-size="68" font-weight="900"
+                  fill="#fff0b9" opacity=".23">1</text>
               </g>
             </g>
-            <rect x="173" y="87" width="14" height="70" rx="5.5" fill="url(#rGold)" stroke="#9e651d" stroke-width=".7"/>
-            <path d="M175 90 Q172 98 176 105 Q179 97 179 88 M185 90 Q188 101 184 109 Q182 98 182 88"
-              fill="#ffe4a4" opacity=".8"/>
+            <g class="candle realNumberCandle" id="rn9">
+              <g class="candleInner">
+                <rect class="hot" x="181" y="75" width="54" height="88" rx="18" fill="transparent" pointer-events="all"/>
+                <line x1="204" y1="102" x2="204" y2="91" stroke="#644022" stroke-width="2.1" stroke-linecap="round"/>
+                <circle class="wickGlow" cx="204" cy="91" r="5.2" fill="#ffd27a" opacity="0"/>
+                <g transform="translate(204 96) scale(.76)">
+                  <ellipse class="halo" cx="0" cy="-17" rx="24" ry="30" fill="url(#gHalo)"/>
+                  <g class="flame">
+                    <path d="M0 0 C9 -6 10 -16 0 -34 C-10 -17 -9 -6 0 0 Z" fill="url(#rFlame)"/>
+                    <path d="M0 -4 C4.5 -8 5 -15 0 -22 C-5 -15 -4.5 -8 0 -4 Z" fill="#fffbd7"/>
+                  </g>
+                </g>
+                <text class="ndigit realNumDigit" x="205" y="151" text-anchor="middle"
+                  font-family="Georgia,'Times New Roman',serif" font-size="68" font-weight="900"
+                  fill="url(#rGold)" stroke="#9c621c" stroke-width="1.2" paint-order="stroke fill">9</text>
+                <text x="204.3" y="150.3" text-anchor="middle" pointer-events="none"
+                  font-family="Georgia,'Times New Roman',serif" font-size="68" font-weight="900"
+                  fill="#fff0b9" opacity=".23">9</text>
+              </g>
+            </g>
           </g>
 
           <!-- 一刀后的真实横切面与分离切片 -->
@@ -1345,7 +1383,7 @@ function afterReveal(){
 }
 
 /* ---------- 第3幕 温馨房间 · 可互动的奶油蛋糕 ---------- */
-let roomInited = false, candlesOut = false, micTimer = null;
+let roomInited = false, candlesOut = false;
 let waitingCut = false, cakeCut = false;
 const cfx = document.getElementById('cakeFx'), cfctx = cfx.getContext('2d');
 let parts = [], fxLoopOn = false, lastSugar = 0;
@@ -1457,7 +1495,7 @@ function startCakeIntro(){
   const overlay = document.getElementById('cakeIntro');
   const preview = overlay && overlay.querySelector('.cakeIntroPreview');
   const cake = document.getElementById('cakeSvg');
-  if(!overlay || !preview || !cake){ beginCakeCut(); return; }
+  if(!overlay || !preview || !cake){ beginCakeBlow(); return; }
 
   const markup = new XMLSerializer().serializeToString(cake);
   const image = new Image();
@@ -1472,21 +1510,21 @@ function startCakeIntro(){
   preview.replaceChildren(image);
 }
 
-function beginCakeCut(){
+function beginCakeBlow(){
   const tip = document.getElementById('blowTip');
   const meter = document.getElementById('blowMeter');
   const stage = document.getElementById('cakeStage');
-  if(micTimer){ clearInterval(micTimer); micTimer = null; }
-  candlesOut = true;
-  waitingCut = true;
-  meter.classList.remove('on');
+  candlesOut = false;
+  waitingCut = false;
+  holdVal = 0;
+  setMeter(0);
+  meter.classList.add('on');
   document.getElementById('cakeSvg').classList.add('cardHidden');
   document.getElementById('realCakeSvg').classList.add('show');
-  document.getElementById('cakeHeading').textContent = "🍰 先切下第一块";
-  tip.innerHTML = "奶油和浆果都在眼前，这是一块真正的蛋糕<br>在蛋糕上横着划一刀，切下第一块";
+  document.getElementById('cakeHeading').textContent = "🎂 吹灭 19 岁的蜡烛";
+  tip.innerHTML = "长按蛋糕上的数字蜡烛<br>蜡烛熄灭时，手机会轻轻震动";
   const cutHint = document.getElementById('cutHint');
-  cutHint.textContent = "在蛋糕上横着划一刀，切下第一块 🍰";
-  cutHint.classList.add('on');
+  cutHint.classList.remove('on');
   stage.classList.add('revealed');
   chime();
 }
@@ -1502,7 +1540,7 @@ function finishCakeIntro(immediate){
     overlay.classList.remove('show','slideOut');
     overlay.style.display = 'none';
     overlay.setAttribute('aria-hidden','true');
-    beginCakeCut();
+    beginCakeBlow();
   }, wait);
 }
 
@@ -1515,14 +1553,16 @@ function initRoom(){
   requestAnimationFrame(sizeCakeFx);
   addEventListener('resize', sizeCakeFx);
 
-  // 蜡烛：长按蓄力吹 / 轻点有反馈
-  ['nc1'].forEach(id=>{
-    const el = document.getElementById(id);
-    el.addEventListener('pointerdown', e=>{ e.preventDefault(); startHold(); });
-    el.addEventListener('pointerup', endHold);
-    el.addEventListener('pointercancel', endHold);
-    el.addEventListener('pointerleave', endHold);
+  // 数字蜡烛：按住蓄力，熄灭时触发手机振动
+  const candleTarget = document.getElementById('realNumberCandles');
+  candleTarget.addEventListener('pointerdown', e=>{
+    if(candlesOut) return;
+    e.preventDefault(); e.stopPropagation();
+    try{ candleTarget.setPointerCapture(e.pointerId); }catch(_e){}
+    startHold();
   });
+  ['pointerup','pointercancel'].forEach(ev=>candleTarget.addEventListener(ev, endHold));
+  candleTarget.addEventListener('contextmenu', e=>e.preventDefault());
   // 装饰：点一下有回应
   const top = document.getElementById('toppings');
   top.addEventListener('click', ()=>{
@@ -1564,25 +1604,28 @@ function bitBubble(text){
 let holdTimer = null, holdVal = 0;
 function startHold(){
   if(candlesOut) return;
-  const bar = document.getElementById('blowBar'), meter = document.getElementById('blowMeter');
+  if(holdTimer) clearInterval(holdTimer);
+  const meter = document.getElementById('blowMeter');
   holdVal = 0; meter.classList.remove('full');
-  document.querySelector('#nc1 .candleInner').classList.add('tap');
+  document.querySelectorAll('#realNumberCandles .candleInner').forEach(el=>el.classList.add('tap'));
   holdTimer = setInterval(()=>{
-    holdVal += 4.2;
-    bar.style.width = Math.min(100, holdVal) + '%';
-    if(Math.random() < .5){
+    holdVal += 1.7;
+    setMeter(holdVal);
+    if(Math.random() < .36){
       const r = cfx.getBoundingClientRect();
-      burst((180/360)*r.width, (50/460)*r.height, 2, 'sugar', { spd:1.4, g:.02, life:26, up:.8 });
+      burst((Math.random()<.5?159:204)/360*r.width, (88/460)*r.height, 2, 'sugar', {
+        spd:1.15, g:.01, life:24, up:.9
+      });
     }
     if(holdVal >= 100){ endHold(); blowAll(); }
-  }, 30);
+  }, 40);
 }
 function endHold(){
   if(holdTimer){ clearInterval(holdTimer); holdTimer = null; }
-  document.querySelector('#nc1 .candleInner').classList.remove('tap');
+  document.querySelectorAll('#realNumberCandles .candleInner').forEach(el=>el.classList.remove('tap'));
   if(!candlesOut){
     const bar = document.getElementById('blowBar');
-    if(parseFloat(bar.style.width) < 100) bar.style.width = '0%';
+    if(parseFloat(bar.style.width) < 100) setTimeout(()=>{ bar.style.width = '0%'; }, 90);
   }
 }
 function setMeter(v){
@@ -1591,59 +1634,28 @@ function setMeter(v){
   meter.classList.toggle('full', v >= 92);
 }
 
-/* 麦克风吹气：音量越大火苗越乱，持续吹够时间自动灭 */
-async function initMic(){
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    const ctx = audio();
-    const src = ctx.createMediaStreamSource(stream);
-    const an = ctx.createAnalyser(); an.fftSize = 512;
-    src.connect(an);
-    const data = new Uint8Array(an.frequencyBinCount);
-    let frames = 0;
-    const micStart = Date.now();
-    const f1 = document.querySelector('#nc1 .flame');
-    const glow = document.getElementById('candleGlow');
-    micTimer = setInterval(()=>{
-      if(Date.now() - micStart < 1500 || candlesOut) return;
-      an.getByteFrequencyData(data);
-      let low = 0; for(let i=0;i<12;i++) low += data[i];
-      low /= 12;
-      const hot = low > 42;
-      if(f1) f1.classList.toggle('wild', hot);
-      if(glow) glow.style.opacity = (.72 + Math.min(.4, (low-30)/160)).toFixed(2);
-      if(!hot){ setMeter(Math.max(0, (parseFloat(document.getElementById('blowBar').style.width)||0) - 3)); return; }
-      frames++;
-      setMeter(frames * 14);
-      const r = cfx.getBoundingClientRect();
-      burst((180/360)*r.width, (48/460)*r.height, 1, 'sugar', { spd:1.5, g:.01, life:22, up:1 });
-      if(frames > 6){ frames = 0; blowAll(); if(f1) f1.classList.remove('wild'); }
-    }, 120);
-  }catch(e){
-    document.getElementById('blowTip').innerHTML =
-      '这台手机没开麦克风权限,没关系<br>按住火苗吹一吹,也一样能许愿 ✨';
-  }
-}
-
 /* 吹灭 */
 function blowAll(){
   if(candlesOut) return;
   candlesOut = true;
-  if(micTimer) clearInterval(micTimer);
   if(holdTimer) endHold();
   whoosh();
   setMeter(100);
+  if(navigator.vibrate) navigator.vibrate([45,35,90]);
+  const realCandles = document.getElementById('realNumberCandles');
+  realCandles.classList.add('extinguishShake');
+  setTimeout(()=>realCandles.classList.remove('extinguishShake'), 520);
   document.getElementById('room').classList.add('dark');
   document.getElementById('candleGlow').classList.add('off');
-  ['nc1'].forEach((id,k)=>{
+  ['rn1','rn9'].forEach((id,k)=>{
     const el = document.getElementById(id);
     setTimeout(()=>{
       el.classList.add('out');
       const r = cfx.getBoundingClientRect();
-      const cx = 180 / 360 * r.width;
-      const cy = 51 / 460 * r.height;
-      burst(cx, cy, 16, 'smoke', { spd:.5, g:-.012, life:70, r:3, up:.5, jitter:5 });
-    }, k*200);
+      const cx = (id === 'rn1' ? 159 : 204) / 360 * r.width;
+      const cy = 91 / 460 * r.height;
+      burst(cx, cy, 17, 'smoke', { spd:.48, g:-.012, life:72, r:3, up:.5, jitter:5 });
+    }, k*190);
   });
   setTimeout(()=>{
     chime();
@@ -1656,10 +1668,13 @@ function blowAll(){
     }
     startFxLoop();
     document.getElementById('blowTip').innerHTML =
-      '呼—— 烛光熄灭了 🌬️<br>你许的愿望,已经交给这个暖暖的房间保管 ✨';
+      '呼—— 19 岁的烛光熄灭了 🌙<br>现在，在蛋糕上横着划一刀';
     waitingCut = true;
-    document.getElementById('cutHint').classList.add('on');
-    bitBubble('轮到切蛋糕啦 🍰');
+    document.getElementById('blowMeter').classList.remove('on');
+    document.getElementById('cakeHeading').textContent = "🍰 先切下第一块";
+    const cutHint = document.getElementById('cutHint');
+    cutHint.textContent = "在蛋糕上横着划一刀，切下第一块 🍰";
+    cutHint.classList.add('on');
   }, 760);
 }
 
