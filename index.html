@@ -210,6 +210,16 @@
     from { opacity:.2; transform:scale(.9) translateY(18px); filter:blur(5px); }
     to { opacity:1; transform:none; filter:none; }
   }
+  #cakeSvg.cardHidden { display:none; }
+  #realCakeSvg { display:none; }
+  #realCakeSvg.show {
+    display:block; animation:realCakeIn 1.05s cubic-bezier(.18,.95,.28,1.08) both;
+  }
+  @keyframes realCakeIn {
+    0% { opacity:0; transform:translateY(28px) scale(.9); filter:blur(7px); }
+    65% { opacity:1; transform:translateY(-5px) scale(1.012); filter:blur(0); }
+    100% { opacity:1; transform:none; filter:none; }
+  }
   #cakeFx { position:absolute; inset:0; pointer-events:none; z-index:6; }
   .candleGlow { position:absolute; left:50%; top:13%; width:42%; aspect-ratio:1; transform:translate(-50%,-18%);
     background:radial-gradient(circle, rgba(255,239,174,.72) 0%, rgba(255,198,103,.25) 38%, transparent 72%);
@@ -249,11 +259,12 @@
     opacity:0; pointer-events:none; transition:opacity .6s ease, transform .6s ease; }
   .cutHint.on { opacity:1; transform:translateX(-50%) scale(1); animation:hintBob 1.6s ease-in-out infinite; }
   @keyframes hintBob { 0%,100%{margin-left:0} 50%{margin-left:-9px} }
-  .knifeFx { position:absolute; z-index:8; top:46%; left:-16%; font-size:34px; opacity:0; pointer-events:none;
-    filter:drop-shadow(0 4px 8px rgba(120,50,70,.4)); }
+  .knifeFx { position:absolute; z-index:8; top:45%; left:-18%; width:82px; opacity:0; pointer-events:none;
+    filter:drop-shadow(0 7px 8px rgba(75,40,35,.32)); }
+  .knifeFx svg { display:block; width:100%; height:auto; transform:rotate(-13deg); }
   .knifeFx.slice { animation:knifeRun .62s cubic-bezier(.4,.1,.3,1) both; }
-  @keyframes knifeRun { 0%{opacity:0; left:-16%; transform:translateY(-6px) rotate(-16deg)}
-    18%{opacity:1} 82%{opacity:1} 100%{opacity:0; left:96%; transform:translateY(2px) rotate(6deg)} }
+  @keyframes knifeRun { 0%{opacity:0; left:-18%; transform:translateY(-12px) rotate(-5deg)}
+    15%{opacity:1} 78%{opacity:1} 100%{opacity:0; left:92%; transform:translateY(9px) rotate(5deg)} }
   .shine { position:absolute; z-index:7; left:-20%; top:47%; width:140%; height:5px; opacity:0; pointer-events:none;
     background:linear-gradient(90deg,transparent,#fff8e0 30%,#fff 50%,#ffe9c0 70%,transparent);
     filter:blur(1px); border-radius:4px; }
@@ -713,13 +724,13 @@
           <g id="drips"></g><g id="pearls"></g><g id="sugars"></g><g id="ribbons"></g>
 
           <!-- 切开后的纸雕切口与斜切一角 -->
-          <g id="cutFace" opacity="0">
+          <g id="cardCutFace" opacity="0">
             <path d="M220 302 L254 379 L222 383 Z" fill="#f0dfc3" stroke="#bc873a" stroke-width="1.1"/>
             <path d="M221 306 L247 369" stroke="#fffaf0" stroke-width="6" stroke-linecap="round"/>
             <path d="M221 310 L247 367" stroke="#c4934b" stroke-width="1.2"/>
             <path d="M255 376 l21 -2 -3 9 -18 -1 Z" fill="#fffaf0" stroke="#bc873a" stroke-width=".7"/>
           </g>
-          <g id="slicePiece" opacity="0">
+          <g id="cardSlicePiece" opacity="0">
             <g transform="translate(279 353) rotate(8)">
               <path d="M-17 5 L18 -1 L23 27 L-10 34 Z" fill="url(#gPaper)" stroke="#c08a3c" stroke-width="1.1"/>
               <path d="M-15 10 L20 4 M-13 17 L21 11 M-11 24 L22 18" stroke="#e2b96d" stroke-width="2.2"/>
@@ -738,9 +749,236 @@
             <path d="M180 442 c-2.5-3 2-6 3-2 c1-4 5.5-1 3 2 l-3 2.5 Z" fill="url(#gGold)" stroke="none"/>
           </g>
         </svg>
+
+        <!-- 卡片滑出后出现：独立的三维实体奶油蛋糕 -->
+        <svg class="cakeSvg realCakeSvg" id="realCakeSvg" viewBox="0 0 360 460" xmlns="http://www.w3.org/2000/svg" aria-label="实体奶油生日蛋糕">
+          <defs>
+            <linearGradient id="rIvorySide" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#d6b891"/><stop offset=".08" stop-color="#f4e5cb"/>
+              <stop offset=".28" stop-color="#fffaf0"/><stop offset=".58" stop-color="#fffdf8"/>
+              <stop offset=".82" stop-color="#f1dfc3"/><stop offset=".94" stop-color="#d7b88f"/>
+              <stop offset="1" stop-color="#bb976e"/>
+            </linearGradient>
+            <linearGradient id="rBlushSide" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#d69a9c"/><stop offset=".1" stop-color="#f1c7c4"/>
+              <stop offset=".3" stop-color="#ffe6df"/><stop offset=".58" stop-color="#fff3e9"/>
+              <stop offset=".82" stop-color="#eec3bf"/><stop offset=".94" stop-color="#ce9296"/>
+              <stop offset="1" stop-color="#b67b7e"/>
+            </linearGradient>
+            <radialGradient id="rIvoryTop" cx=".38" cy=".26" r=".82">
+              <stop offset="0" stop-color="#fffef9"/><stop offset=".55" stop-color="#fff5e5"/>
+              <stop offset=".85" stop-color="#efd6b5"/><stop offset="1" stop-color="#d1aa7d"/>
+            </radialGradient>
+            <radialGradient id="rBlushTop" cx=".38" cy=".24" r=".82">
+              <stop offset="0" stop-color="#fff7ef"/><stop offset=".52" stop-color="#ffdfd8"/>
+              <stop offset=".86" stop-color="#eeb7b6"/><stop offset="1" stop-color="#cb8d91"/>
+            </radialGradient>
+            <linearGradient id="rCream" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fffefb"/><stop offset=".62" stop-color="#fff4e3"/>
+              <stop offset="1" stop-color="#ecd1ad"/>
+            </linearGradient>
+            <linearGradient id="rGold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#9d661f"/><stop offset=".2" stop-color="#ebc97c"/>
+              <stop offset=".43" stop-color="#c28b31"/><stop offset=".67" stop-color="#ffe6a8"/>
+              <stop offset=".86" stop-color="#bd8128"/><stop offset="1" stop-color="#8d5717"/>
+            </linearGradient>
+            <linearGradient id="rSpongeCut" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f5d7a7"/><stop offset=".18" stop-color="#d99d62"/>
+              <stop offset=".26" stop-color="#ffe7bd"/><stop offset=".38" stop-color="#b8585d"/>
+              <stop offset=".48" stop-color="#e9b56f"/><stop offset=".61" stop-color="#f8d9a5"/>
+              <stop offset=".74" stop-color="#bc6957"/><stop offset=".87" stop-color="#e6bc82"/>
+              <stop offset="1" stop-color="#b5784d"/>
+            </linearGradient>
+            <radialGradient id="rBerry" cx=".32" cy=".24" r=".78">
+              <stop offset="0" stop-color="#ffb1ac"/><stop offset=".35" stop-color="#e95360"/>
+              <stop offset=".78" stop-color="#a51f39"/><stop offset="1" stop-color="#6e1026"/>
+            </radialGradient>
+            <radialGradient id="rPearl" cx=".35" cy=".25" r=".75">
+              <stop offset="0" stop-color="#fffdf7"/><stop offset=".55" stop-color="#f2dfbd"/>
+              <stop offset="1" stop-color="#c79c60"/>
+            </radialGradient>
+            <radialGradient id="rFlame">
+              <stop offset="0" stop-color="#fffde7"/><stop offset=".34" stop-color="#ffe474"/>
+              <stop offset=".72" stop-color="#ff9b28"/><stop offset="1" stop-color="#ed6e1d" stop-opacity=".3"/>
+            </radialGradient>
+            <filter id="rTexture" x="-8%" y="-8%" width="116%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" seed="8" result="noise"/>
+              <feColorMatrix in="noise" type="saturate" values="0" result="mono"/>
+              <feComponentTransfer in="mono" result="grain">
+                <feFuncA type="table" tableValues="0 .11"/>
+              </feComponentTransfer>
+              <feBlend in="SourceGraphic" in2="grain" mode="soft-light"/>
+            </filter>
+            <filter id="rShadow" x="-35%" y="-30%" width="170%" height="180%">
+              <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#6d3d32" flood-opacity=".27"/>
+            </filter>
+            <filter id="rSoft" x="-40%" y="-40%" width="180%" height="190%">
+              <feGaussianBlur stdDeviation="5"/>
+            </filter>
+            <filter id="rSmallShadow" x="-80%" y="-80%" width="260%" height="260%">
+              <feDropShadow dx="1" dy="2" stdDeviation="1.2" flood-color="#662a30" flood-opacity=".32"/>
+            </filter>
+            <g id="rRaspberry">
+              <circle cx="-4" cy="0" r="4.2" fill="url(#rBerry)"/>
+              <circle cx="2.5" cy="-2" r="4.4" fill="url(#rBerry)"/>
+              <circle cx="4" cy="4" r="4" fill="url(#rBerry)"/>
+              <circle cx="-2" cy="5.5" r="3.8" fill="url(#rBerry)"/>
+              <circle cx="0" cy="1.5" r="3.2" fill="#d53a54"/>
+              <path d="M-2 -4 Q0 -9 4 -6 Q1 -4 0 0" fill="none" stroke="#6e9c63" stroke-width="1.3"/>
+            </g>
+            <g id="rRosette">
+              <ellipse cx="0" cy="4" rx="10" ry="4" fill="#cbaa83" opacity=".28"/>
+              <circle cx="0" cy="0" r="9" fill="#f7e4c9"/>
+              <path d="M-6 2 C-9 -5 -2 -10 4 -7 C11 -4 9 5 2 7 C-4 8 -8 3 -6 0 C-4 -3 1 -4 3 -1"
+                fill="none" stroke="#fffdf8" stroke-width="3.2" stroke-linecap="round"/>
+              <path d="M-4 -4 Q0 -7 4 -4" fill="none" stroke="#d8b991" stroke-width=".8" opacity=".7"/>
+            </g>
+          </defs>
+
+          <ellipse cx="181" cy="432" rx="150" ry="18" fill="#633427" opacity=".26" filter="url(#rSoft)"/>
+
+          <!-- 金属蛋糕托盘 -->
+          <g id="realStand" filter="url(#rShadow)">
+            <ellipse cx="180" cy="424" rx="133" ry="17" fill="#705128"/>
+            <ellipse cx="180" cy="417" rx="134" ry="17" fill="url(#rGold)"/>
+            <ellipse cx="180" cy="414" rx="124" ry="12" fill="#f9e9bc" opacity=".7"/>
+            <ellipse cx="180" cy="416" rx="109" ry="10" fill="#9f6b21" opacity=".36"/>
+            <path d="M164 423 H196 L190 440 H170 Z" fill="url(#rGold)"/>
+            <ellipse cx="180" cy="443" rx="59" ry="10" fill="#8e5918"/>
+            <ellipse cx="180" cy="440" rx="59" ry="9" fill="url(#rGold)"/>
+          </g>
+
+          <!-- 最下层：真实奶油侧面、裱花与水果 -->
+          <g id="realBottomTier" filter="url(#rTexture)">
+            <path d="M62 318 L62 393 C62 410 111 422 180 422 C249 422 298 410 298 393 L298 318 Z"
+              fill="url(#rIvorySide)"/>
+            <ellipse cx="180" cy="318" rx="118" ry="25" fill="url(#rIvoryTop)"/>
+            <path d="M62 323 C64 346 73 349 78 341 C82 335 84 357 91 362 C98 367 100 340 107 340 C116 340 116 360 124 363 C132 366 136 341 145 342 C154 343 157 359 166 361 C176 363 177 338 187 338 C199 338 198 361 209 362 C220 363 221 341 231 340 C241 339 241 360 251 360 C261 360 262 339 271 339 C280 339 282 352 290 347 C297 342 298 335 298 327 L298 318 L62 318 Z"
+              fill="url(#rCream)" opacity=".98"/>
+            <path d="M76 333 C88 331 96 336 105 335 M127 337 C137 334 147 338 155 337 M181 335 C192 332 202 337 211 335 M236 336 C246 333 257 338 266 335"
+              fill="none" stroke="#fffef9" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>
+            <path d="M67 383 Q180 392 293 382 L293 393 Q180 406 67 393 Z" fill="url(#rGold)" opacity=".9"/>
+            <path d="M72 385 Q180 394 288 384" fill="none" stroke="#fff0b8" stroke-width="1.1" opacity=".8"/>
+            <g fill="url(#rPearl)">
+              <circle cx="82" cy="389" r="3.2"/><circle cx="101" cy="392" r="3.1"/>
+              <circle cx="120" cy="395" r="3.3"/><circle cx="140" cy="397" r="3.2"/>
+              <circle cx="160" cy="398" r="3.3"/><circle cx="180" cy="399" r="3.2"/>
+              <circle cx="200" cy="398" r="3.3"/><circle cx="220" cy="397" r="3.2"/>
+              <circle cx="240" cy="395" r="3.3"/><circle cx="260" cy="392" r="3.2"/>
+              <circle cx="279" cy="389" r="3.1"/>
+            </g>
+            <use href="#rRosette" transform="translate(94 376) scale(1.05)"/>
+            <use href="#rRosette" transform="translate(127 381) scale(1.1)"/>
+            <use href="#rRosette" transform="translate(160 384) scale(1.12)"/>
+            <use href="#rRosette" transform="translate(193 385) scale(1.12)"/>
+            <use href="#rRosette" transform="translate(226 382) scale(1.1)"/>
+            <use href="#rRosette" transform="translate(259 376) scale(1.05)"/>
+            <use href="#rRaspberry" transform="translate(111 307) scale(1.05)" filter="url(#rSmallShadow)"/>
+            <use href="#rRaspberry" transform="translate(176 312) scale(1.12)" filter="url(#rSmallShadow)"/>
+            <use href="#rRaspberry" transform="translate(247 307) scale(1.02)" filter="url(#rSmallShadow)"/>
+            <path d="M138 300 l7 -7 10 2 -5 8 Z M205 306 l10 -5 7 7 -9 4 Z M278 350 l7 -6 8 4 -7 6 Z"
+              fill="url(#rGold)" opacity=".92"/>
+          </g>
+
+          <!-- 中层 -->
+          <g id="realMiddleTier" filter="url(#rTexture)">
+            <path d="M94 232 L94 312 C94 328 130 337 180 337 C230 337 266 328 266 312 L266 232 Z"
+              fill="url(#rBlushSide)"/>
+            <ellipse cx="180" cy="232" rx="86" ry="22" fill="url(#rBlushTop)"/>
+            <path d="M94 237 C97 254 104 255 108 249 C112 242 116 264 123 266 C131 268 132 246 139 246 C148 246 148 266 156 268 C165 270 168 246 176 246 C185 246 187 267 196 268 C205 269 207 246 216 246 C225 246 228 260 236 259 C245 258 247 244 254 245 C260 246 263 250 266 240 L266 232 L94 232 Z"
+              fill="url(#rCream)" opacity=".98"/>
+            <path d="M108 245 C117 242 125 248 134 246 M151 248 C161 245 170 249 179 247 M196 247 C206 244 215 249 224 247 M241 246 C249 243 257 247 262 244"
+              fill="none" stroke="#fffdf8" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+            <path d="M96 300 Q180 308 264 299 L264 313 Q180 326 96 312 Z" fill="url(#rGold)" opacity=".88"/>
+            <g fill="url(#rPearl)">
+              <circle cx="107" cy="307" r="2.9"/><circle cx="127" cy="311" r="2.8"/>
+              <circle cx="147" cy="314" r="3"/><circle cx="167" cy="315" r="2.8"/>
+              <circle cx="187" cy="315" r="3"/><circle cx="207" cy="314" r="2.8"/>
+              <circle cx="227" cy="311" r="3"/><circle cx="247" cy="307" r="2.8"/>
+            </g>
+            <use href="#rRosette" transform="translate(120 294) scale(.82)"/>
+            <use href="#rRosette" transform="translate(151 300) scale(.88)"/>
+            <use href="#rRosette" transform="translate(181 302) scale(.9)"/>
+            <use href="#rRosette" transform="translate(211 300) scale(.88)"/>
+            <use href="#rRosette" transform="translate(241 294) scale(.82)"/>
+            <use href="#rRaspberry" transform="translate(135 225) scale(.88)" filter="url(#rSmallShadow)"/>
+            <use href="#rRaspberry" transform="translate(183 228) scale(.9)" filter="url(#rSmallShadow)"/>
+            <use href="#rRaspberry" transform="translate(230 224) scale(.85)" filter="url(#rSmallShadow)"/>
+          </g>
+
+          <!-- 顶层 -->
+          <g id="realTopTier" filter="url(#rTexture)">
+            <path d="M123 157 L123 229 C123 242 149 249 180 249 C211 249 237 242 237 229 L237 157 Z"
+              fill="url(#rIvorySide)"/>
+            <ellipse cx="180" cy="157" rx="58" ry="18" fill="url(#rIvoryTop)"/>
+            <path d="M123 161 C126 176 132 178 136 173 C140 168 144 187 150 189 C156 191 159 171 165 172 C171 173 173 189 180 190 C188 190 190 171 197 172 C204 173 206 188 213 188 C221 188 222 169 229 170 C234 171 235 177 237 166 L237 157 L123 157 Z"
+              fill="url(#rCream)"/>
+            <path d="M124 222 Q180 230 236 222 L236 233 Q180 243 124 233 Z" fill="url(#rGold)" opacity=".9"/>
+            <g fill="url(#rPearl)">
+              <circle cx="137" cy="229" r="2.5"/><circle cx="157" cy="233" r="2.6"/>
+              <circle cx="180" cy="235" r="2.7"/><circle cx="203" cy="233" r="2.6"/>
+              <circle cx="223" cy="229" r="2.5"/>
+            </g>
+            <use href="#rRosette" transform="translate(144 215) scale(.66)"/>
+            <use href="#rRosette" transform="translate(180 220) scale(.7)"/>
+            <use href="#rRosette" transform="translate(216 215) scale(.66)"/>
+            <use href="#rRaspberry" transform="translate(149 151) scale(.75)" filter="url(#rSmallShadow)"/>
+            <use href="#rRaspberry" transform="translate(212 152) scale(.78)" filter="url(#rSmallShadow)"/>
+            <path d="M167 149 l6 -5 7 2 -4 6 Z" fill="url(#rGold)"/>
+            <path d="M194 151 l5 -4 6 3 -5 5 Z" fill="url(#rGold)"/>
+          </g>
+
+          <!-- 金色蜡烛 -->
+          <g id="realCandle" filter="url(#rShadow)">
+            <ellipse cx="180" cy="158" rx="12" ry="4" fill="#9c6b30" opacity=".24"/>
+            <line x1="180" y1="89" x2="180" y2="76" stroke="#5f3921" stroke-width="2.2" stroke-linecap="round"/>
+            <g transform="translate(180 82) scale(1.1)">
+              <ellipse cx="0" cy="-17" rx="24" ry="29" fill="#ffd57c" opacity=".15" filter="url(#rSoft)"/>
+              <g class="flame">
+                <path d="M0 0 C9 -6 10 -16 0 -34 C-10 -17 -9 -6 0 0 Z" fill="url(#rFlame)"/>
+                <path d="M0 -4 C4.5 -8 5 -15 0 -22 C-5 -15 -4.5 -8 0 -4 Z" fill="#fffbd7"/>
+              </g>
+            </g>
+            <rect x="173" y="87" width="14" height="70" rx="5.5" fill="url(#rGold)" stroke="#9e651d" stroke-width=".7"/>
+            <path d="M175 90 Q172 98 176 105 Q179 97 179 88 M185 90 Q188 101 184 109 Q182 98 182 88"
+              fill="#ffe4a4" opacity=".8"/>
+          </g>
+
+          <!-- 一刀后的真实横切面与分离切片 -->
+          <g id="cutFace" opacity="0" filter="url(#rSmallShadow)">
+            <path d="M226 327 L267 323 L291 401 L249 414 Z" fill="url(#rSpongeCut)" stroke="#9c6042" stroke-width="1.1"/>
+            <path d="M227 341 L271 337 M231 353 L277 349 M236 368 L283 363 M241 384 L287 379"
+              fill="none" stroke="#fff0d7" stroke-width="2.5" opacity=".88"/>
+            <path d="M228 348 L276 344 M234 375 L286 370" stroke="#a64049" stroke-width="3.2" opacity=".76"/>
+            <path d="M226 327 L248 414 L249 414 L267 323 Z" fill="#f0c691" opacity=".28"/>
+            <path d="M249 414 Q268 413 291 401" fill="none" stroke="#c89363" stroke-width="2" opacity=".8"/>
+          </g>
+          <g id="slicePiece" opacity="0" filter="url(#rShadow)">
+            <g id="realSliceArt">
+              <path d="M227 327 C243 315 269 314 282 322 C273 336 250 342 227 340 Z"
+                fill="url(#rIvoryTop)" stroke="#d4b17f" stroke-width=".7"/>
+              <path d="M227 330 L239 409 C254 414 273 408 284 399 L283 323 C260 339 240 342 227 330 Z"
+                fill="url(#rIvorySide)"/>
+              <path d="M227 330 L239 409 L250 412 L239 330 Z" fill="url(#rSpongeCut)"/>
+              <path d="M227 340 L240 409 M231 349 L245 409" stroke="#fff3df" stroke-width="2" opacity=".85"/>
+              <path d="M230 358 L243 408" stroke="#a7474d" stroke-width="2.8" opacity=".8"/>
+              <path d="M229 329 C241 335 264 334 280 323" fill="none" stroke="#fffdf8" stroke-width="3.2"/>
+              <use href="#rRaspberry" transform="translate(257 316) scale(.9)"/>
+              <circle cx="273" cy="320" r="5" fill="url(#rPearl)"/>
+            </g>
+          </g>
+        </svg>
         <canvas id="cakeFx"></canvas>
         <div class="shine" id="shineFx"></div>
-        <div class="knifeFx" id="knifeFx">🔪</div>
+        <div class="knifeFx" id="knifeFx" aria-hidden="true">
+          <svg viewBox="0 0 96 42" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 18 Q16 8 30 13 L63 20 L30 27 Q15 29 4 23 Z" fill="#4a2924"/>
+            <path d="M11 16 L29 18 M12 22 L29 21" stroke="#8d6251" stroke-width="1.5" opacity=".55"/>
+            <path d="M28 14 Q49 7 91 11 Q95 18 91 25 Q52 32 28 28 Z" fill="#dfe5e7" stroke="#aab3b7" stroke-width="1"/>
+            <path d="M30 15 Q54 11 89 14 Q91 18 89 21 Q55 23 30 25 Z" fill="#f7fbfd" opacity=".72"/>
+            <path d="M82 12 L92 18 L82 25 Z" fill="#b6c0c3"/>
+          </svg>
+        </div>
         <div class="cutHint" id="cutHint">蜡烛灭了 🕯️ 在蛋糕上横着划一刀</div>
       </div>
     </div>
@@ -1242,11 +1480,10 @@ function beginCakeCut(){
   candlesOut = true;
   waitingCut = true;
   meter.classList.remove('on');
-  document.getElementById('candleGlow').classList.add('off');
-  document.getElementById('room').classList.add('dark');
-  document.getElementById('nc1').classList.add('out');
+  document.getElementById('cakeSvg').classList.add('cardHidden');
+  document.getElementById('realCakeSvg').classList.add('show');
   document.getElementById('cakeHeading').textContent = "🍰 先切下第一块";
-  tip.innerHTML = "卡片里的蛋糕，已经来到你面前<br>在蛋糕上横着划一刀，切下第一块";
+  tip.innerHTML = "奶油和浆果都在眼前，这是一块真正的蛋糕<br>在蛋糕上横着划一刀，切下第一块";
   const cutHint = document.getElementById('cutHint');
   cutHint.textContent = "在蛋糕上横着划一刀，切下第一块 🍰";
   cutHint.classList.add('on');
@@ -1304,7 +1541,7 @@ function initRoom(){
   stage.addEventListener('pointermove', e=>{
     if(!moving) return;
     const now = Date.now();
-    if(waitingCut && (e.clientX - sx) > 80 && Math.abs(e.clientY - sy) < 90){ moving = false; doCut(); return; }
+    if(waitingCut && Math.abs(e.clientX - sx) > 80 && Math.abs(e.clientY - sy) < 90){ moving = false; doCut(); return; }
     if(candlesOut || now - lastSugar < 46) return;
     lastSugar = now;
     const r = cfx.getBoundingClientRect();
@@ -1434,23 +1671,28 @@ function doCut(){
   const kn = document.getElementById('knifeFx'), sh = document.getElementById('shineFx');
   kn.classList.add('slice'); sh.classList.add('slice');
   sawSnd();
+  if(navigator.vibrate) navigator.vibrate(28);
   setTimeout(()=>{
     document.getElementById('cutFace').setAttribute('opacity','1');
     const sp = document.getElementById('slicePiece');
     sp.setAttribute('opacity','1');
     sp.style.transformOrigin = 'center';
-    sp.animate ? sp.animate([{transform:'translateY(-16px)'},{transform:'translateY(0)'}], {duration:520, easing:'cubic-bezier(.2,1.5,.4,1)'}) : null;
+    sp.style.transition = "transform .88s cubic-bezier(.2,.85,.28,1)";
+    requestAnimationFrame(()=>{ sp.style.transform = "translate(48px,10px) rotate(2deg)"; });
     const r = cfx.getBoundingClientRect();
-    burst((252/360)*r.width, (354/460)*r.height, 18, 'heart', { spd:1.5, g:.02, life:60, up:1, r:7,
-      cols:['#ff8fa8','#ffb3c6','#ff7f9e','#ffd0dc'] });
+    burst((250/360)*r.width, (357/460)*r.height, 24, 'confetti', {
+      spd:1.35, g:.06, life:48, cols:['#efd1a4','#c98e58','#fff5df','#a64e52','#d8a567']
+    });
     sparkleSnd();
+  }, 430);
+  setTimeout(()=>{
     document.getElementById('blowTip').innerHTML =
       '第一块,切给最想见的人 🍰<br>接下来,写下你的愿望吧';
     document.getElementById('cakeHeading').textContent = "🎂 许愿时间";
     document.getElementById('blowMeter').classList.remove('on');
     document.getElementById('wishBox').classList.add('show');
     showWishBtn();
-  }, 480);
+  }, 1380);
 }
 
 /* 愿望 */
