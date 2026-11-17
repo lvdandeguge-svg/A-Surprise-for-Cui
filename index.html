@@ -215,7 +215,13 @@
   #realCakeSvg.show {
     display:block; animation:realCakeIn 1.05s cubic-bezier(.18,.95,.28,1.08) both;
   }
-  #realNumberCandles { cursor:pointer; touch-action:none; user-select:none; -webkit-user-select:none; }
+  #realNumberCandles, #realNumberCandles * {
+    cursor:pointer; touch-action:none;
+    user-select:none !important; -webkit-user-select:none !important;
+    -webkit-touch-callout:none !important; -webkit-user-drag:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #realNumberCandles text { pointer-events:none !important; }
   @keyframes realCakeIn {
     0% { opacity:0; transform:translateY(28px) scale(.9); filter:blur(7px); }
     65% { opacity:1; transform:translateY(-5px) scale(1.012); filter:blur(0); }
@@ -980,6 +986,9 @@
                   fill="#fff0b9" opacity=".23">9</text>
               </g>
             </g>
+            <!-- 顶层透明触摸层：所有长按都落在这里，避免命中可选文字 -->
+            <rect id="numberCandleHit" x="128" y="55" width="116" height="108" rx="22"
+              fill="rgba(0,0,0,0)" pointer-events="all"/>
           </g>
 
           <!-- 一刀后的真实横切面与分离切片 -->
@@ -1558,11 +1567,17 @@ function initRoom(){
   candleTarget.addEventListener('pointerdown', e=>{
     if(candlesOut) return;
     e.preventDefault(); e.stopPropagation();
+    try{ window.getSelection().removeAllRanges(); }catch(_e){}
     try{ candleTarget.setPointerCapture(e.pointerId); }catch(_e){}
     startHold();
   });
-  ['pointerup','pointercancel'].forEach(ev=>candleTarget.addEventListener(ev, endHold));
-  candleTarget.addEventListener('contextmenu', e=>e.preventDefault());
+  ['pointerup','pointercancel','touchend','touchcancel'].forEach(ev=>candleTarget.addEventListener(ev, endHold));
+  candleTarget.addEventListener('touchstart', e=>{
+    if(!candlesOut) e.preventDefault();
+  }, {passive:false});
+  ['contextmenu','selectstart','dragstart'].forEach(ev=>{
+    candleTarget.addEventListener(ev, e=>{ e.preventDefault(); e.stopPropagation(); }, true);
+  });
   // 装饰：点一下有回应
   const top = document.getElementById('toppings');
   top.addEventListener('click', ()=>{
