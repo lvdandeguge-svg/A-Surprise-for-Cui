@@ -437,9 +437,10 @@
   #musicWallView { animation:musicViewIn .65s ease both; }
   #musicPlayerView { display:none; }
   #s5.player-active #musicWallView { display:none; }
-  #s5.player-active #musicPlayerView { display:flex; flex-direction:column; align-items:center; animation:musicViewIn .55s ease both; }
-  #musicPlayerView > * { transition:opacity .28s ease; }
+  #s5.player-active #musicPlayerView { display:flex; flex-direction:column; align-items:center; }
+  #musicPlayerView > * { transition:opacity .28s ease,transform .32s cubic-bezier(.2,.75,.3,1); }
   #s5.opening #musicPlayerView > * { opacity:0; }
+  #s5.opening .playerVinylWrap { transform:scale(.9); }
   #s5.returning #musicPlayerView > *:not(.playerVinylWrap) { opacity:0; }
   #s5.returning .playerVinylWrap { animation:returnVinylOut .38s ease-in forwards; }
   @keyframes returnVinylOut {
@@ -487,7 +488,6 @@
   }
   .recordCoverThumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .recordCoverThumb .coverNote { color:#fffdf8; font-size:clamp(15px,3.5vw,23px); font-weight:800; }
-  }
   .recordFly {
     position:fixed; z-index:700; border-radius:50%; pointer-events:none;
     display:flex; align-items:center; justify-content:center;
@@ -2491,6 +2491,10 @@ function animateRecordFly(node,from,to){
   const dy = to.top - from.top;
   const sx = to.width / from.width;
   const sy = to.height / from.height;
+  const midX = dx * .56;
+  const midY = dy * .48 - Math.min(28, Math.abs(dy) * .12 + 12);
+  const midScaleX = 1 + (sx - 1) * .55;
+  const midScaleY = 1 + (sy - 1) * .55;
   if(prefersReducedMotion || !node.animate){
     node.remove();
     return Promise.resolve();
@@ -2506,11 +2510,16 @@ function animateRecordFly(node,from,to){
     };
     const animation = node.animate([
       { transform:"translate(0,0) scale(1)", opacity:1 },
-      { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`, opacity:.96 }
-    ],{duration:620,easing:"cubic-bezier(0.4,0,0.2,1)",fill:"forwards"});
+      {
+        transform:`translate(${midX}px,${midY}px) scale(${midScaleX},${midScaleY}) rotate(7deg)`,
+        opacity:1,
+        offset:.56
+      },
+      { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy}) rotate(0deg)`, opacity:1 }
+    ],{duration:680,easing:"cubic-bezier(0.32,0.05,0.18,1)",fill:"forwards"});
     animation.onfinish = finish;
     animation.oncancel = finish;
-    setTimeout(finish, 760);
+    setTimeout(finish, 820);
   });
 }
 
@@ -2533,6 +2542,7 @@ function openMusicTrack(index, sourceButton){
     loadMusicTrack(index,true);
     requestAnimationFrame(()=>{
       const target = document.querySelector('.playerVinylWrap').getBoundingClientRect();
+      setTimeout(()=>s5.classList.remove('opening'),560);
       animateRecordFly(flyingRecord,from,target).finally(()=>{
         s5.classList.remove('opening');
       });
