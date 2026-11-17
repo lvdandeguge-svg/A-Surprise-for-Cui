@@ -301,9 +301,89 @@
   .endmark.in { animation:fadeIn 2s ease both; }
   .foot { margin-top:20px; font-size:12px; color:rgba(160,100,110,.65); line-height:2; opacity:0; }
   .foot.in { animation:fadeIn 2s ease both; }
+
+/* ============ wax seal unseal gate ============ */
+#sealGate{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(120% 90% at 50% 18%, #f7e4d3 0%, #f0cdbb 42%, #e7b39f 100%);
+  transition:opacity .7s ease, visibility .7s;overflow:hidden;}
+#sealGate.gone{opacity:0;visibility:hidden;pointer-events:none;}
+.sg-tag{position:absolute;top:22px;left:50%;transform:translateX(-50%);font-size:13px;letter-spacing:2px;
+  color:#a9624f;opacity:.85;font-weight:600;}
+.sg-skip{position:absolute;top:16px;right:18px;font-size:14px;color:#9c5a48;opacity:.85;cursor:pointer;
+  padding:10px;-webkit-tap-highlight-color:transparent;}
+.sg-env{position:relative;width:min(78vw,330px);aspect-ratio:5/3.6;filter:drop-shadow(0 22px 40px rgba(150,80,60,.32));}
+.sg-pouch{position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(160deg,#fbe3cf,#f3c7ab 60%,#eab897);border:1px solid rgba(190,120,90,.35);}
+.sg-pouch:after{content:"";position:absolute;left:0;right:0;bottom:0;height:60%;
+  background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.35));
+  clip-path:polygon(0 40%,50% 0,100% 40%,100% 100%,0 100%);opacity:.5;border-radius:0 0 14px 14px;}
+.sg-letter{position:absolute;left:7%;right:7%;top:14%;height:78%;border-radius:8px;
+  background:linear-gradient(180deg,#fffaf2,#fff3e6);box-shadow:0 8px 22px rgba(150,80,60,.25);
+  display:flex;align-items:center;justify-content:center;transform:translateY(70%);z-index:1;
+  transition:transform 1s cubic-bezier(.2,.8,.2,1);}
+.sg-letter-inner{font-size:15px;line-height:1.9;color:#b5654d;text-align:center;font-weight:600;
+  letter-spacing:1px;opacity:0;transition:opacity .6s .35s;padding:14px;}
+.sg-flap{position:absolute;left:0;right:0;top:0;height:60%;z-index:3;transform-origin:top center;
+  background:linear-gradient(180deg,#f7d2b8,#f1c2a5);border-radius:14px 14px 0 0;
+  clip-path:polygon(0 0,100% 0,50% 100%);transition:transform .85s cubic-bezier(.6,-.1,.3,1.15);}
+.sg-flap.open{transform:rotateX(172deg);}
+.sg-sealwrap{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);z-index:6;
+  width:118px;height:118px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none;}
+.sg-ring{position:absolute;inset:0;transform:rotate(-90deg);}
+.sg-ring circle{fill:none;stroke-width:5;stroke-linecap:round;}
+.sg-ring-bg{stroke:rgba(255,255,255,.4);}
+.sg-ring-fg{stroke:url(#sggold);stroke-dasharray:339.29;stroke-dashoffset:339.29;transition:opacity .3s;}
+.sg-seal{position:absolute;inset:16px;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%, #d6544f 0%, #a8262a 52%, #7c1418 100%);
+  box-shadow:0 8px 20px rgba(120,20,24,.5),inset 0 2px 6px rgba(255,255,255,.25),inset 0 -8px 14px rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;
+  clip-path:polygon(50% 0,62% 12%,78% 6%,82% 22%,96% 26%,90% 42%,100% 54%,88% 62%,92% 78%,76% 78%,70% 93%,56% 86%,44% 99%,34% 84%,18% 88%,20% 71%,5% 64%,14% 50%,2% 38%,16% 30%,12% 14%,28% 16%,36% 2%);}
+.sg-seal-hi{position:absolute;left:26%;top:18%;width:34%;height:26%;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,220,210,.85),rgba(255,255,255,0) 70%);filter:blur(1px);}
+.sg-seal-mark{color:rgba(255,225,205,.72);font-size:24px;font-weight:800;letter-spacing:1px;
+  text-shadow:0 1px 2px rgba(0,0,0,.4);font-family:Georgia,serif;}
+.sg-hint{position:absolute;left:50%;bottom:-42px;transform:translateX(-50%);white-space:nowrap;
+  font-size:14px;color:#9c4b3a;font-weight:600;letter-spacing:1px;animation:sgBob 1.6s ease-in-out infinite;}
+@keyframes sgBob{0%,100%{transform:translate(-50%,0);opacity:.7}50%{transform:translate(-50%,-6px);opacity:1}}
+.sg-sealwrap.burst .sg-seal{animation:sgSealBurst .7s cubic-bezier(.3,.7,.2,1) forwards;}
+@keyframes sgSealBurst{0%{transform:scale(1)}30%{transform:scale(1.25)}100%{transform:scale(.1) rotate(40deg);opacity:0}}
+.sg-sealwrap.burst .sg-ring-fg{opacity:0;}
+.sg-sparks{position:absolute;left:50%;top:54%;z-index:7;pointer-events:none;}
+.sg-spark{position:absolute;left:0;top:0;width:7px;height:7px;border-radius:50%;
+  background:radial-gradient(circle,#fff2c4,#f4a92e 60%,rgba(244,169,46,0));opacity:0;}
+#sealGate .sg-letter.rise{transform:translateY(-6%);}
+#sealGate .sg-letter.rise .sg-letter-inner{opacity:1;}
+@media (prefers-reduced-motion: reduce){
+  #sealGate .sg-hint{animation:none;}
+  .sg-sealwrap.burst .sg-seal{animation:none;opacity:0;}
+  .sg-letter{transition:none;} .sg-flap{transition:none;}
+}
 </style>
 </head>
 <body>
+<!-- ====== wax seal unseal gate ====== -->
+<div id="sealGate">
+  <div class="sg-tag">一封加急的信 &#9993;</div>
+  <div class="sg-skip" id="sgSkip">跳过 &rsaquo;</div>
+  <div class="sg-env">
+    <div class="sg-letter"><div class="sg-letter-inner">蜡封崩开的瞬间<br>信就归你了</div></div>
+    <div class="sg-pouch"></div>
+    <div class="sg-flap" id="sgFlap"></div>
+    <div class="sg-sealwrap" id="sgSealWrap" role="button" aria-label="按住蜡封拆信">
+      <svg class="sg-ring" viewBox="0 0 120 120">
+        <defs><linearGradient id="sggold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffe89a"/><stop offset="1" stop-color="#f2a93b"/>
+        </linearGradient></defs>
+        <circle class="sg-ring-bg" cx="60" cy="60" r="54"/>
+        <circle class="sg-ring-fg" id="sgRing" cx="60" cy="60" r="54"/>
+      </svg>
+      <div class="sg-seal"><span class="sg-seal-hi"></span><span class="sg-seal-mark">ABC</span></div>
+    </div>
+    <div class="sg-hint" id="sgHint">按住蜡封，亲手拆开</div>
+    <div class="sg-sparks" id="sgSparks"></div>
+  </div>
+</div>
+
 <canvas id="sky"></canvas>
 <div class="aurora"><i></i><i></i><i></i><i></i></div>
 <canvas id="fx"></canvas>
@@ -1424,7 +1504,83 @@ function finaleStart(){
   });
 })();
 
-/* ---------- 启动:恢复进度(放最后) ---------- */
+/* ---------- wax seal unseal gate ---------- */
+(function(){
+  var SEAL_KEY='hm-sealed-v1';
+  var gate=document.getElementById('sealGate');
+  var wrap=document.getElementById('sgSealWrap');
+  var ring=document.getElementById('sgRing');
+  var flap=document.getElementById('sgFlap');
+  var hint=document.getElementById('sgHint');
+  var letter=document.querySelector('#sealGate .sg-letter');
+  var sparks=document.getElementById('sgSparks');
+  var skip=document.getElementById('sgSkip');
+  if(!gate) return;
+  var C=339.29, DUR=1700, need=1700;
+  var raf=null, holding=false, doneLock=false;
+  function setProg(p){ ring.style.strokeDashoffset=(C*(1-p)).toFixed(2); }
+  function hide(instant){
+    if(instant){ gate.classList.add('gone'); gate.style.display='none'; return; }
+    gate.classList.add('gone');
+    setTimeout(function(){ gate.style.display='none'; },760);
+  }
+  function markDone(){ try{ localStorage.setItem(SEAL_KEY,'1'); }catch(e){} }
+  function spawnSparks(){
+    for(var i=0;i<16;i++){
+      var s=document.createElement('span'); s.className='sg-spark'; sparks.appendChild(s);
+      var a=Math.random()*Math.PI*2, d=46+Math.random()*70, sz=5+Math.random()*6;
+      s.style.width=s.style.height=sz+'px';
+      var dx=Math.cos(a)*d, dy=Math.sin(a)*d;
+      var an=s.animate([{transform:'translate(-50%,-50%) scale(.4)',opacity:1},
+                        {transform:'translate('+dx+'px,'+dy+'px) scale(1)',opacity:0}],
+                       {duration:650+Math.random()*350,easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
+      (function(node){ if(an) an.onfinish=function(){ node.remove(); }; })(s);
+    }
+  }
+  function breakSeal(){
+    if(doneLock) return; doneLock=true; holding=false; if(raf) cancelAnimationFrame(raf);
+    setProg(1); markDone();
+    wrap.classList.add('burst'); spawnSparks();
+    hint.style.opacity='0';
+    setTimeout(function(){ flap.classList.add('open'); },260);
+    setTimeout(function(){ letter.classList.add('rise'); },520);
+    setTimeout(function(){ hide(false); },1650);
+  }
+  function pressDown(e){
+    if(doneLock) return;
+    if(e.cancelable) e.preventDefault();
+    holding=true; need=DUR; if(raf) cancelAnimationFrame(raf);
+    hint.textContent='再按紧一点…';
+    var last=performance.now();
+    function step(t){
+      if(!holding) return;
+      need=Math.max(0,need-(t-last)); last=t;
+      setProg(Math.min(1,1-need/DUR));
+      if(need<=0){ breakSeal(); return; }
+      raf=requestAnimationFrame(step);
+    }
+    raf=requestAnimationFrame(step);
+  }
+  function pressUp(){
+    if(doneLock||!holding) return;
+    holding=false; if(raf) cancelAnimationFrame(raf);
+    if(need>0 && need<DUR){
+      var back=performance.now(), from=need;
+      function undo(t){ if(holding) return; var k=Math.min(1,(t-back)/420);
+        setProg(Math.max(0,1-(from+(DUR-from)*k)/DUR));
+        if(k<1) requestAnimationFrame(undo); else hint.textContent='按住蜡封，亲手拆开'; }
+      requestAnimationFrame(undo);
+    } else { hint.textContent='按住蜡封，亲手拆开'; }
+  }
+  wrap.addEventListener('pointerdown',pressDown);
+  window.addEventListener('pointerup',pressUp);
+  window.addEventListener('pointercancel',pressUp);
+  skip.addEventListener('click',function(){ if(doneLock) return; doneLock=true; markDone(); hide(false); });
+  var saved=0; try{ saved=parseInt(localStorage.getItem(KEY)||'0',10)||0; }catch(e){}
+  var already=false; try{ already=localStorage.getItem(SEAL_KEY)==='1'; }catch(e){}
+  if(already || saved>0){ hide(true); }
+})();
+/* ---------- boot ---------- */
 (function boot(){
   requestAnimationFrame(()=>document.body.classList.add('ready'));
   let saved = 0;
