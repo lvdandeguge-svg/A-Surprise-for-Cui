@@ -538,11 +538,19 @@
     width:100%; display:flex; align-items:center; justify-content:space-between;
     color:#9d6669; margin-bottom:8px;
   }
+  .musicPlayerActions { display:flex; align-items:center; gap:9px; }
   .musicBackBtn {
     appearance:none; border:1px solid rgba(180,123,104,.35); border-radius:999px;
     background:rgba(255,255,255,.52); color:#9b5b62; padding:9px 15px; font-size:13px;
     cursor:pointer; font-weight:700;
   }
+  .musicRestartBtn {
+    appearance:none; border:0; background:transparent; color:#a56f6d;
+    padding:6px 2px; font-size:11.5px; font-weight:700; cursor:pointer;
+    letter-spacing:.5px; -webkit-tap-highlight-color:transparent;
+  }
+  .musicRestartBtn:active { transform:scale(.95); }
+  .musicWallHeader .musicRestartBtn { margin-top:9px; padding:6px 12px; }
   .playerCounter { font-size:12px; letter-spacing:1px; }
   .playerVinylWrap {
     position:relative; width:min(61vw,286px); aspect-ratio:1; margin:8px auto 15px;
@@ -1342,6 +1350,7 @@
         <div class="musicEyebrow">THE 19TH BIRTHDAY RADIO</div>
         <h2 id="musicWallTitle">为你点的16首歌 · 19岁生日快乐</h2>
         <p id="musicWallSub">先看看歌名，再选一首今晚想听的吧。</p>
+        <button class="musicRestartBtn" onclick="restartExperience()">↺ 从头开始</button>
       </header>
       <div id="recordGrid" aria-label="16首歌曲列表"></div>
       <div class="musicWallFooter">
@@ -1353,7 +1362,10 @@
     <div id="musicPlayerView">
       <div class="musicPlayerTop">
         <button class="musicBackBtn" onclick="returnToRecordWall()">← 返回 🎵</button>
-        <span class="playerCounter" id="playerCounter">第 1 / 16 首</span>
+        <div class="musicPlayerActions">
+          <span class="playerCounter" id="playerCounter">第 1 / 16 首</span>
+          <button class="musicRestartBtn" onclick="restartExperience()">↺ 从头开始</button>
+        </div>
       </div>
       <div class="playerVinylWrap">
         <div class="playerVinyl">
@@ -1399,7 +1411,7 @@
     <div class="endmark" id="endMark">· FIN ·</div>
     <div class="foot" id="footBox">
       🌈 这个页面会一直留在这里,随时可以回来看看<br>
-      <button class="btn ghost" onclick="replay()">再玩一次 ↺</button>
+      <button class="btn ghost" onclick="restartExperience()">从头再来一遍 ↺</button>
     </div>
   </section>
 
@@ -1556,7 +1568,16 @@ function go(i){
   if(i===5) initMusicWall();
   if(i===6) finaleStart();
 }
-function replay(){ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }
+function replay(){
+  try{
+    localStorage.removeItem(KEY);
+    localStorage.removeItem("hm-sealed-v1");
+  }catch(e){}
+  location.reload();
+}
+function restartExperience(){
+  if(confirm("要从第一幕重新开始吗？当前进度会清除。")) replay();
+}
 
 /* ---------- 第1幕 问答 ---------- */
 const QUIZ = [
