@@ -404,35 +404,197 @@
     .giftPopup,.giftPopupIcon,.giftWhisper { animation:none; }
   }
 
-  /* ---------- 兑换码 ---------- */
-  #codeCard { perspective:900px; margin:8px 0 4px; cursor:pointer; }
-  #codeInner {
-    width:min(84vw,320px); height:180px; position:relative; transform-style:preserve-3d;
-    transition:transform 1.1s cubic-bezier(.3,1.2,.4,1);
+  /* ---------- 音乐礼物过渡 ---------- */
+  #musicJourney {
+    position:fixed; inset:0; z-index:430; display:flex; align-items:center; justify-content:center;
+    padding:28px; text-align:center; opacity:0; visibility:hidden; pointer-events:none;
+    background:radial-gradient(circle at 50% 42%,rgba(255,252,239,.98),rgba(255,218,203,.98) 52%,rgba(255,189,202,.98));
+    transition:opacity .55s ease, visibility .55s;
   }
-  #codeCard.flip #codeInner { transform:rotateY(180deg); }
-  .face {
-    position:absolute; inset:0; backface-visibility:hidden; border-radius:18px;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px;
+  #musicJourney.show { opacity:1; visibility:visible; pointer-events:auto; }
+  #musicJourney.hide { opacity:0; }
+  .musicJourneyText {
+    max-width:360px; color:#8d4c54; font-size:23px; line-height:1.75; font-weight:800;
+    letter-spacing:2px; text-shadow:0 2px 0 rgba(255,255,255,.8);
+    animation:musicJourneyIn .85s cubic-bezier(.18,1.2,.3,1) both;
   }
-  .face.front {
-    background:linear-gradient(135deg,#ff9e8a,#ffb36b 55%,#ff8fa8);
-    border:1px solid rgba(255,255,255,.7); box-shadow:0 8px 26px rgba(255,140,130,.45);
-    color:#fff;
+  .musicJourneyText small { display:block; margin-top:12px; color:#b07870; font-size:13px; letter-spacing:3px; font-weight:600; }
+  @keyframes musicJourneyIn {
+    from{opacity:0; transform:translateY(24px) scale(.9);}
+    to{opacity:1; transform:none;}
   }
-  .face.back {
-    transform:rotateY(180deg);
-    background:linear-gradient(135deg,#5a3a12,#8a6420 50%,#4a300c);
-    border:1px solid rgba(255,225,150,.8); box-shadow:0 8px 30px rgba(200,150,60,.5);
+
+  /* ---------- 16首歌唱片墙 ---------- */
+  #s5 { justify-content:flex-start; padding:18px 14px calc(28px + env(safe-area-inset-bottom)); overflow-y:auto; }
+  #musicWallView, #musicPlayerView {
+    position:relative; z-index:2; width:100%; max-width:760px; margin:auto;
   }
-  #codeText { font-size:min(7.4vw,27px); letter-spacing:3px; color:#ffe9b0; font-weight:700; margin:10px 0 4px;
-    text-shadow:0 0 14px rgba(255,215,120,.9); opacity:0; }
-  #copyBtn { margin-top:8px; padding:8px 22px; font-size:13.5px; opacity:0; pointer-events:none; }
-  #codeCard.opened #codeText { opacity:1; animation:codeIn .9s ease both; }
-  #codeCard.opened #copyBtn { opacity:1; pointer-events:auto; transition:opacity .8s .3s; }
-  @keyframes codeIn { from{opacity:0; letter-spacing:12px; filter:blur(6px);} to{opacity:1; letter-spacing:3px; filter:blur(0);} }
-  #redeemSteps { font-size:13px; color:#a06a72; line-height:2; margin-top:14px; max-width:320px;
-    opacity:0; transform:translateY(10px); }
+  #musicWallView { animation:musicViewIn .65s ease both; }
+  #musicPlayerView { display:none; }
+  #s5.player-active #musicWallView { display:none; }
+  #s5.player-active #musicPlayerView { display:flex; flex-direction:column; align-items:center; animation:musicViewIn .55s ease both; }
+  @keyframes musicViewIn {
+    from{opacity:0; transform:translateY(13px);}
+    to{opacity:1; transform:none;}
+  }
+  .musicWallHeader { margin:2px auto 18px; text-align:center; }
+  .musicEyebrow { color:#b0786d; font-size:11.5px; letter-spacing:3px; margin-bottom:8px; font-weight:700; }
+  #musicWallTitle {
+    margin:0; color:#884852; font-size:clamp(22px,5.4vw,30px); line-height:1.4; letter-spacing:1px;
+    text-shadow:0 2px 0 rgba(255,255,255,.8),0 0 24px rgba(255,180,142,.4);
+  }
+  #musicWallSub { margin:9px auto 0; color:#a06d6e; font-size:13.5px; line-height:1.75; max-width:340px; }
+  #recordGrid {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px 15px;
+    width:100%; margin:0 auto; padding:8px 8px 24px;
+  }
+  .recordCard {
+    appearance:none; border:0; background:transparent; padding:0; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:9px; color:#8a4a56;
+    -webkit-tap-highlight-color:transparent; user-select:none;
+  }
+  .recordCard .vinyl {
+    position:relative; width:clamp(58px,12.5vw,86px); aspect-ratio:1; border-radius:50%;
+    background:
+      radial-gradient(circle at 34% 27%,rgba(255,255,255,.75) 0 4%,transparent 14%),
+      repeating-radial-gradient(circle,rgba(42,30,35,.72) 0 1px,rgba(92,70,77,.34) 1.5px 3px),
+      conic-gradient(from 30deg,var(--c1),var(--c2),#4d4350,var(--c1));
+    border:3px solid rgba(255,255,255,.72);
+    box-shadow:0 10px 22px rgba(132,75,77,.22),inset 0 0 0 8px rgba(43,33,39,.2);
+    transition:transform .22s ease,box-shadow .22s ease;
+  }
+  .recordCard .vinyl::after {
+    content:""; position:absolute; inset:11%; border-radius:50%;
+    background:radial-gradient(circle,var(--c2) 0 38%,rgba(255,255,255,.82) 39% 40%,#493d47 41% 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);
+  }
+  .recordNumber {
+    position:absolute; z-index:2; inset:32%; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:#fffdf8; font-size:clamp(12px,2.8vw,17px); font-weight:800; letter-spacing:0;
+    text-shadow:0 1px 4px rgba(40,20,25,.42);
+    background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.48),var(--c1) 55%,var(--c2));
+  }
+  .recordFly {
+    position:fixed; z-index:700; border-radius:50%; pointer-events:none;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:15px; font-weight:800;
+    border:3px solid rgba(255,255,255,.75);
+    box-shadow:0 18px 38px rgba(116,65,68,.34);
+    will-change:transform,opacity;
+  }
+  .recordTitle {
+    width:100%; min-height:2.8em; font-size:clamp(11px,2.65vw,14px); line-height:1.4;
+    font-weight:700; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden; overflow-wrap:anywhere;
+  }
+  .recordCard:hover .vinyl, .recordCard:focus-visible .vinyl { transform:scale(1.075); box-shadow:0 14px 30px rgba(132,75,77,.32); }
+  .recordCard.playing .vinyl { box-shadow:0 0 0 3px rgba(255,250,226,.9),0 0 24px rgba(255,177,117,.75); }
+  .recordCard.playing .recordNumber::after {
+    content:"♪"; position:absolute; right:-13px; top:-10px; font-size:14px;
+    animation:musicNotePulse .9s ease-in-out infinite;
+  }
+  @keyframes musicNotePulse { 0%,100%{transform:translateY(0);opacity:.6} 50%{transform:translateY(-5px);opacity:1} }
+  .musicWallFooter { display:flex; flex-direction:column; align-items:center; gap:10px; padding:0 0 8px; }
+  .musicWallFooter p { color:#a57472; font-size:12px; letter-spacing:1px; }
+  .music-wall-notes { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .music-wall-notes span {
+    position:absolute; color:rgba(172,103,93,.32); font-size:18px;
+    animation:musicNoteFloat 6s ease-in-out infinite;
+  }
+  .music-wall-notes span:nth-child(1){left:5%;top:16%;animation-delay:-1s}
+  .music-wall-notes span:nth-child(2){right:8%;top:24%;animation-delay:-3.2s}
+  .music-wall-notes span:nth-child(3){left:12%;top:64%;animation-delay:-4.6s}
+  .music-wall-notes span:nth-child(4){right:13%;top:72%;animation-delay:-2.1s}
+  .music-wall-notes span:nth-child(5){left:44%;top:6%;animation-delay:-5.3s}
+  .music-wall-notes span:nth-child(6){right:36%;bottom:8%;animation-delay:-1.7s}
+  @keyframes musicNoteFloat {
+    0%,100%{transform:translateY(0) rotate(-6deg);opacity:.28}
+    50%{transform:translateY(-18px) rotate(7deg);opacity:.6}
+  }
+  #s5.player-active .music-wall-notes { display:none; }
+  .musicPlayerTop {
+    width:100%; display:flex; align-items:center; justify-content:space-between;
+    color:#9d6669; margin-bottom:8px;
+  }
+  .musicBackBtn {
+    appearance:none; border:1px solid rgba(180,123,104,.35); border-radius:999px;
+    background:rgba(255,255,255,.52); color:#9b5b62; padding:9px 15px; font-size:13px;
+    cursor:pointer; font-weight:700;
+  }
+  .playerCounter { font-size:12px; letter-spacing:1px; }
+  .playerVinylWrap {
+    position:relative; width:min(61vw,286px); aspect-ratio:1; margin:8px auto 15px;
+    border-radius:50%; padding:10px; background:radial-gradient(circle,#fff7e8,#e9cdb0);
+    box-shadow:0 18px 40px rgba(126,69,68,.28),0 0 0 1px rgba(255,255,255,.8);
+  }
+  .playerVinyl {
+    position:relative; width:100%; height:100%; border-radius:50%;
+    background:repeating-radial-gradient(circle,rgba(35,27,31,.92) 0 2px,rgba(95,74,80,.52) 3px 5px);
+    animation:vinylSpin 30s linear infinite; animation-play-state:paused;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
+  }
+  #s5.music-playing .playerVinyl { animation-play-state:running; }
+  @keyframes vinylSpin { to{transform:rotate(360deg)} }
+  .playerCover {
+    position:absolute; inset:18%; border-radius:50%; overflow:hidden;
+    background:forestgreen; box-shadow:0 0 0 5px rgba(255,250,237,.84);
+  }
+  .playerCover img { width:100%; height:100%; object-fit:cover; display:block; }
+  .playerCover .coverFallback {
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    font-size:38px; background:conic-gradient(var(--c1),var(--c2),var(--c1));
+  }
+  .musicMeta { text-align:center; width:100%; padding:0 10px; }
+  .playerTitle { color:#884852; font-size:clamp(19px,4.8vw,23px); line-height:1.45; font-weight:800; }
+  .playerArtist { color:#a06d70; font-size:14px; margin-top:5px; }
+  .lyricsScroller {
+    width:min(92vw,520px); height:min(29vh,236px); margin:12px auto 0; overflow-y:auto;
+    scrollbar-width:none; -ms-overflow-style:none; text-align:center;
+    -webkit-mask-image:linear-gradient(to bottom,transparent,#000 16%,#000 84%,transparent);
+            mask-image:linear-gradient(to bottom,transparent,#000 16%,#000 84%,transparent);
+    scroll-behavior:smooth;
+  }
+  .lyricsScroller::-webkit-scrollbar { display:none; }
+  .lyricsContent { padding:92px 12px 170px; }
+  .lyricLine {
+    color:rgba(139,91,94,.6); font-size:15px; line-height:1.85; padding:4px 8px;
+    transition:color .25s ease,transform .25s ease,font-size .25s ease;
+  }
+  .lyricLine.active {
+    color:#82434f; font-weight:800; transform:scale(1.035);
+    text-shadow:0 0 16px rgba(255,194,150,.55);
+  }
+  .lyricEmpty { color:#ae7b78; font-size:14px; line-height:2; text-align:center; }
+  .musicControls {
+    width:min(94vw,560px); margin:10px auto 0; padding:12px 14px 14px; border-radius:22px;
+    background:rgba(255,250,241,.76); border:1px solid rgba(209,156,89,.32);
+    box-shadow:0 12px 30px rgba(143,79,72,.16);
+    position:sticky; bottom:calc(10px + env(safe-area-inset-bottom)); z-index:5;
+  }
+  .musicControlRow { display:flex; align-items:center; justify-content:center; gap:18px; }
+  .musicIconBtn {
+    appearance:none; border:0; background:transparent; color:#9a5a65; cursor:pointer;
+    width:38px; height:38px; border-radius:50%; font-size:18px; font-weight:700;
+  }
+  .musicPlayBtn {
+    width:54px; height:54px; font-size:22px; color:#fff;
+    background:linear-gradient(135deg,#ff927e,#ffb769 55%,#ff7fa2);
+    box-shadow:0 7px 20px rgba(230,126,107,.34);
+  }
+  .musicProgress { flex:1; min-width:80px; accent-color:#e58c7e; height:4px; cursor:pointer; }
+  .musicTime { color:#ad7a75; font-size:11px; min-width:70px; text-align:center; letter-spacing:.5px; }
+  .musicFinaleBtn { margin-top:14px; margin-bottom:4px; animation:musicFinaleFloat 2.6s ease-in-out infinite; }
+  @keyframes musicFinaleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+  .musicError { color:#aa666d; font-size:14px; line-height:1.8; padding:30px 12px; }
+  @media (max-width:560px){
+    #recordGrid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px 10px; padding-inline:2px; }
+    .recordCard .vinyl { width:clamp(62px,19vw,88px); }
+    .musicWallFooter p { max-width:280px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .playerVinyl,.musicFinaleBtn,.music-wall-notes span,.recordCard.playing .recordNumber::after { animation:none; }
+  }
 
   /* ---------- 结尾艺术字 ---------- */
   #fx { position:fixed; inset:0; z-index:40; pointer-events:none; display:none; }
@@ -1137,30 +1299,61 @@
         <p class="giftPopupText">它，就在你手里。</p>
         <div class="giftWhisper">🤫 先别打开！</div>
         <p class="giftPopupNote">还有一份礼物，在下一页等你…</p>
-        <button class="btn" onclick="go(5)">去领第二份礼物 🎁</button>
+        <button class="btn" onclick="beginMusicGift()">去听藏在音乐里的礼物 🎵</button>
       </div>
     </div>
   </section>
 
-  <!-- 第5幕 兑换码 -->
+  <!-- 第5幕 16首歌唱片墙 -->
   <section class="scene" id="s5">
-    <h2 class="glow">🎉 第二份礼物到了</h2>
-    <p class="sub">世界也为你的19岁,准备了一点小心意</p>
-    <div id="codeCard" onclick="flipCode()">
-      <div id="codeInner">
-        <div class="face front">
-          <div style="font-size:34px">🎁</div>
-          <div style="margin-top:8px;font-size:14px">点一下,拆开这份小心意</div>
-        </div>
-        <div class="face back">
-          <div style="font-size:13px;color:#ffe9b0;letter-spacing:2px" id="appNameTag">汽水音乐 · 会员兑换码</div>
-          <div id="codeText">XXXX-XXXX-XXXX</div>
-          <button class="btn ghost" id="copyBtn" onclick="event.stopPropagation();copyCode()">复制兑换码</button>
-        </div>
+    <div class="music-wall-notes" aria-hidden="true">
+      <span>♪</span><span>♫</span><span>♬</span><span>♪</span><span>♫</span><span>♬</span>
+    </div>
+    <div id="musicWallView">
+      <header class="musicWallHeader">
+        <div class="musicEyebrow">THE 19TH BIRTHDAY RADIO</div>
+        <h2 id="musicWallTitle">为你点的16首歌 · 19岁生日快乐</h2>
+        <p id="musicWallSub">先看看歌名，再选一首今晚想听的吧。</p>
+      </header>
+      <div id="recordGrid" aria-label="16首歌曲列表"></div>
+      <div class="musicWallFooter">
+        <p>点开唱片，就把这一刻调成属于你的背景音乐。</p>
+        <button class="btn ghost" onclick="leaveMusicForFinale()">去看最后的惊喜 🌈</button>
       </div>
     </div>
-    <div id="redeemSteps">兑换方式:打开<b id="appNameTag2">汽水音乐</b> App → 我的 → 会员中心 → 兑换码,粘贴即可领取 🎵</div>
-    <button class="btn" id="finaleBtn" style="opacity:0;pointer-events:none" onclick="startFinale()">去看压轴惊喜 🌈</button>
+
+    <div id="musicPlayerView">
+      <div class="musicPlayerTop">
+        <button class="musicBackBtn" onclick="returnToRecordWall()">← 返回 🎵</button>
+        <span class="playerCounter" id="playerCounter">第 1 / 16 首</span>
+      </div>
+      <div class="playerVinylWrap">
+        <div class="playerVinyl">
+          <div class="playerCover" id="playerCover"></div>
+        </div>
+      </div>
+      <div class="musicMeta">
+        <div class="playerTitle" id="playerTitle">未知歌曲</div>
+        <div class="playerArtist" id="playerArtist">未知歌手</div>
+      </div>
+      <div class="lyricsScroller" id="lyricsScroller" aria-live="polite">
+        <div class="lyricsContent" id="lyricsContent"></div>
+      </div>
+      <div class="musicControls">
+        <div class="musicControlRow">
+          <button class="musicIconBtn" onclick="changeTrack(-1)" aria-label="上一首">⏮</button>
+          <button class="musicIconBtn musicPlayBtn" id="musicPlayBtn" onclick="toggleGiftMusic()" aria-label="播放">▶</button>
+          <button class="musicIconBtn" onclick="changeTrack(1)" aria-label="下一首">⏭</button>
+        </div>
+        <div class="musicControlRow" style="margin-top:6px">
+          <span class="musicTime" id="musicCurrent">00:00</span>
+          <input class="musicProgress" id="musicProgress" type="range" min="0" max="100" value="0" step="0.1" aria-label="播放进度">
+          <span class="musicTime" id="musicDuration">00:00</span>
+        </div>
+      </div>
+      <button class="btn musicFinaleBtn" onclick="leaveMusicForFinale()">去看最后的惊喜 🌈</button>
+      <audio id="trackAudio" preload="none"></audio>
+    </div>
   </section>
 
   <!-- 第6幕 祝福 -->
@@ -1182,6 +1375,13 @@
     </div>
   </section>
 
+  <div id="musicJourney" aria-hidden="true">
+    <div class="musicJourneyText">
+      答对了！还有一份礼物，藏在音乐里 🎵
+      <small>十六首歌，等你慢慢点开</small>
+    </div>
+  </div>
+
   <!-- 拼图揭晓层 -->
   <div id="reveal">
     <div style="font-size:15px;color:#ffd9e0;letter-spacing:3px">图里藏的秘密,是这一天 ——</div>
@@ -1193,6 +1393,7 @@
 
 </main>
 
+<script src="music/playlist.js"></script>
 <script>
 /* ================== CONFIG:部署前只改这里 ================== */
 const CONFIG = {
@@ -1201,17 +1402,12 @@ const CONFIG = {
   birthdaySolar: "2026.11.26",      // 农历十月十八对应的公历日子
   lunarYear: "丙午马年",             // 农历干支年
   age: 19,                          // 岁数
-  redeemCode: "XXXX-XXXX-XXXX",     // 汽水音乐会员兑换码,买好后替换
-  redeemApp: "汽水音乐",             // 会员App名称
   beaconUrl: ""                     // Cloudflare Worker 地址,例: https://xxx.workers.dev/hit
 };
 /* =========================================================== */
 
 document.getElementById('nameTag0').textContent = CONFIG.name;
 document.querySelector('#finaleLines .nm').textContent = CONFIG.name;
-document.getElementById('codeText').textContent = CONFIG.redeemCode;
-document.getElementById('appNameTag').textContent = CONFIG.redeemApp + " · 会员兑换码";
-document.getElementById('appNameTag2').textContent = CONFIG.redeemApp;
 document.getElementById('revealDate').textContent = CONFIG.birthdayLunar;
 document.getElementById('revealSub').textContent = "公历 " + CONFIG.birthdaySolar + " · " + CONFIG.lunarYear;
 document.getElementById('revealAge').textContent = CONFIG.age + "岁,你好!";
@@ -1329,6 +1525,7 @@ function go(i){
   if(i===1) renderQuiz();
   if(i===2) initPuzzle();
   if(i===3) initRoom();
+  if(i===5) initMusicWall();
   if(i===6) finaleStart();
 }
 function replay(){ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }
@@ -1960,34 +2157,349 @@ function checkGift(){
 }
 document.getElementById('giftInput').addEventListener('keydown', e=>{ if(e.key==='Enter') checkGift(); });
 
-/* ---------- 第5幕 兑换码:完全翻开后,兑换码与兑换方式一起出现 ---------- */
-let codeFlipped = false;
-function flipCode(){
-  if(codeFlipped) return; codeFlipped = true;
+/* ---------- 第5幕 16首歌唱片墙与点播器 ---------- */
+const MUSIC_COLORS = [
+  ["#f6a7b7","#ffd3b8"],["#ffbd91","#ffe0a6"],["#f8d27e","#fff0b7"],["#a9d8bd","#dff0c8"],
+  ["#91c9dd","#c8e8f1"],["#b8acd8","#e9d8f2"],["#f3a4c0","#f7d0df"],["#eeb08e","#f7dec8"],
+  ["#ead47c","#f8eab3"],["#b7d9a3","#e1ecc9"],["#9fc9de","#d4e8ef"],["#b3a8d3","#ded6ef"],
+  ["#eb9eb1","#f6ced8"],["#eead90","#f6d2ba"],["#e8cb70","#f7e6aa"],["#96cfbb","#d4eadc"]
+];
+let musicWallInited = false;
+let currentTrackIndex = -1;
+let currentLyricIndex = -1;
+let lyricEntries = [];
+let lyricElements = [];
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const trackAudio = document.getElementById('trackAudio');
+
+function formatMusicTime(seconds){
+  if(!Number.isFinite(seconds) || seconds < 0) seconds = 0;
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+}
+
+function beginMusicGift(){
+  const overlay = document.getElementById('musicJourney');
+  const gift = document.getElementById('giftReveal');
+  if(!overlay || overlay.classList.contains('show')) return;
+  const bgm = document.getElementById('bgmAudio');
+  if(bgm) bgm.pause();
+  const bgmBtn = document.getElementById('bgmBtn');
+  if(bgmBtn) bgmBtn.textContent = "🔇";
+  window.musicGiftActive = true;
+  if(gift){ gift.style.transition = "opacity .35s ease,transform .35s ease"; gift.style.opacity = "0"; gift.style.transform = "scale(.96)"; }
+  overlay.setAttribute('aria-hidden','false');
+  overlay.classList.remove('hide');
+  overlay.classList.add('show');
   shimmerSnd();
-  const card = document.getElementById('codeCard');
-  card.classList.add('flip');
   setTimeout(()=>{
-    card.classList.add('opened');
-    const st = document.getElementById('redeemSteps');
-    st.style.opacity = 1; st.style.transform = "none"; st.style.transition = "all .9s ease";
-    const fb = document.getElementById('finaleBtn');
-    fb.style.transition = "opacity 1s .6s"; fb.style.opacity = 1; fb.style.pointerEvents = "auto";
-  }, 1150);
+    go(5);
+    requestAnimationFrame(()=>overlay.classList.add('hide'));
+    setTimeout(()=>{
+      overlay.classList.remove('show','hide');
+      overlay.setAttribute('aria-hidden','true');
+      if(gift){ gift.style.opacity = ""; gift.style.transform = ""; }
+    }, 650);
+  }, 2000);
 }
-function copyCode(){
-  const code = CONFIG.redeemCode, btn = document.getElementById('copyBtn');
-  const done = ()=>{ btn.textContent = "已复制 ✓"; setTimeout(()=>btn.textContent="复制兑换码", 2300); };
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(code).then(done).catch(()=>fallbackCopy(code, done));
-  } else fallbackCopy(code, done);
+
+function initMusicWall(){
+  const s5 = document.getElementById('s5');
+  const grid = document.getElementById('recordGrid');
+  const tracks = Array.isArray(window.MUSIC_TRACKS) ? window.MUSIC_TRACKS : [];
+  if(!s5 || !grid) return;
+  window.musicGiftActive = true;
+  const bgm = document.getElementById('bgmAudio');
+  if(bgm && !bgm.paused) bgm.pause();
+  const bgmBtn = document.getElementById('bgmBtn');
+  if(bgmBtn) bgmBtn.textContent = "🔇";
+  if(musicWallInited){
+    markCurrentRecord();
+    return;
+  }
+  musicWallInited = true;
+  grid.innerHTML = "";
+  if(!tracks.length){
+    grid.innerHTML = '<div class="musicError">音乐清单没有加载成功，请检查 music/playlist.js。</div>';
+    return;
+  }
+  document.getElementById('musicWallTitle').textContent = `为你点的${tracks.length}首歌 · 19岁生日快乐`;
+  document.getElementById('playerCounter').textContent = `第 1 / ${tracks.length} 首`;
+  const frag = document.createDocumentFragment();
+  tracks.forEach((track,index)=>{
+    const colors = MUSIC_COLORS[index % MUSIC_COLORS.length];
+    const button = document.createElement('button');
+    button.type = "button";
+    button.className = "recordCard";
+    button.dataset.trackIndex = String(index);
+    button.style.setProperty("--c1",colors[0]);
+    button.style.setProperty("--c2",colors[1]);
+    const vinyl = document.createElement('span');
+    vinyl.className = "vinyl";
+    const num = document.createElement('span');
+    num.className = "recordNumber";
+    num.textContent = String(index + 1).padStart(2,"0");
+    vinyl.appendChild(num);
+    const title = document.createElement('span');
+    title.className = "recordTitle";
+    title.textContent = track.title || `第${index + 1}首`;
+    button.append(vinyl,title);
+    button.addEventListener('click',()=>openMusicTrack(index, button));
+    frag.appendChild(button);
+  });
+  grid.appendChild(frag);
+  trackAudio.addEventListener('timeupdate', updateMusicProgress);
+  trackAudio.addEventListener('loadedmetadata', ()=>{
+    const duration = Number.isFinite(trackAudio.duration) ? trackAudio.duration : 0;
+    document.getElementById('musicProgress').max = String(duration || 100);
+    document.getElementById('musicDuration').textContent = formatMusicTime(duration);
+  });
+  trackAudio.addEventListener('play', ()=>setMusicPlaying(true));
+  trackAudio.addEventListener('pause', ()=>setMusicPlaying(false));
+  trackAudio.addEventListener('ended', ()=>changeTrack(1));
+  setInterval(()=>{ if(!trackAudio.paused && !document.hidden) updateMusicProgress(); }, 250);
+  document.getElementById('musicProgress').addEventListener('input', e=>{
+    if(Number.isFinite(trackAudio.duration)) trackAudio.currentTime = Number(e.target.value);
+  });
+  if('mediaSession' in navigator){
+    navigator.mediaSession.setActionHandler('play', ()=>trackAudio.play().catch(()=>{}));
+    navigator.mediaSession.setActionHandler('pause', ()=>trackAudio.pause());
+    navigator.mediaSession.setActionHandler('previoustrack', ()=>changeTrack(-1));
+    navigator.mediaSession.setActionHandler('nexttrack', ()=>changeTrack(1));
+  }
 }
-function fallbackCopy(text, cb){
-  const ta = document.createElement('textarea');
-  ta.value = text; ta.style.position = "fixed"; ta.style.opacity = 0;
-  document.body.appendChild(ta); ta.select();
-  try{ document.execCommand('copy'); cb(); }catch(e){}
-  ta.remove();
+
+function updateMusicProgress(){
+  const duration = Number.isFinite(trackAudio.duration) ? trackAudio.duration : 0;
+  const current = Number.isFinite(trackAudio.currentTime) ? trackAudio.currentTime : 0;
+  document.getElementById('musicCurrent').textContent = formatMusicTime(current);
+  document.getElementById('musicDuration').textContent = formatMusicTime(duration);
+  const progress = document.getElementById('musicProgress');
+  if(document.activeElement !== progress) progress.value = String(current);
+  syncLyrics(current);
+}
+
+function parseTimedLyrics(text){
+  const entries = [];
+  const re = /\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\]\s*([^\[]*)/g;
+  let match;
+  while((match = re.exec(text))){
+    const fraction = match[3] ? Number(("0." + match[3])) : 0;
+    const time = Number(match[1]) * 60 + Number(match[2]) + fraction;
+    const line = match[4].replace(/\s+/g," ").trim();
+    if(line) entries.push({time,text:line});
+  }
+  return entries.sort((a,b)=>a.time-b.time);
+}
+
+function isCreditLine(text){
+  return /^(作词|作曲|词曲|改编词曲|词作者|曲作者|编曲|制作人|原唱|配唱制作人|混音|和声|吉他|录音|统筹|监制)\s*[:：]/i.test(text);
+}
+
+function renderLyrics(track){
+  const box = document.getElementById('lyricsContent');
+  const scroller = document.getElementById('lyricsScroller');
+  box.innerHTML = "";
+  lyricEntries = [];
+  lyricElements = [];
+  currentLyricIndex = -1;
+  scroller.scrollTop = 0;
+  const raw = (track.lyrics || "").trim();
+  const stripped = raw.replace(/\[[^\]]*\]/g,"").replace(/\s+/g,"");
+  const fallbackOnly = /^(纯音乐.*|暂无歌词.*)$/.test(stripped);
+  let entries = [];
+  if(track.hasTimedLyrics && raw){
+    entries = parseTimedLyrics(raw).filter(item=>!isCreditLine(item.text));
+  } else if(raw && !fallbackOnly){
+    entries = raw.split(/\r?\n/).map(text=>text.trim()).filter(text=>text && !isCreditLine(text))
+      .map(text=>({time:null,text}));
+  }
+  if(entries.length && entries.every(item=>/^(纯音乐|暂无歌词)/.test(item.text))) entries = [];
+  if(!entries.length){
+    const empty = document.createElement('div');
+    empty.className = "lyricEmpty";
+    empty.textContent = "🎵 纯音乐，用心感受";
+    box.appendChild(empty);
+    return;
+  }
+  entries.forEach(entry=>{
+    const line = document.createElement('div');
+    line.className = "lyricLine";
+    line.textContent = entry.text;
+    if(entry.time !== null){
+      line.addEventListener('click',()=>{
+        trackAudio.currentTime = entry.time;
+        if(trackAudio.paused) trackAudio.play().catch(()=>{});
+      });
+    }
+    box.appendChild(line);
+    lyricEntries.push(entry);
+    lyricElements.push(line);
+  });
+}
+
+function syncLyrics(time){
+  if(!lyricEntries.length || lyricEntries[0].time === null) return;
+  let index = -1;
+  for(let i=0;i<lyricEntries.length;i++){
+    if(lyricEntries[i].time <= time + .12) index = i;
+    else break;
+  }
+  if(index === currentLyricIndex) return;
+  if(currentLyricIndex >= 0 && lyricElements[currentLyricIndex]) lyricElements[currentLyricIndex].classList.remove('active');
+  currentLyricIndex = index;
+  if(index < 0) return;
+  const line = lyricElements[index];
+  line.classList.add('active');
+  const scroller = document.getElementById('lyricsScroller');
+  scroller.scrollTo({ top: line.offsetTop - scroller.clientHeight / 2 + line.clientHeight / 2, behavior:'smooth' });
+}
+
+function updatePlayerCover(track,index){
+  const holder = document.getElementById('playerCover');
+  const colors = MUSIC_COLORS[index % MUSIC_COLORS.length];
+  holder.style.setProperty("--c1",colors[0]);
+  holder.style.setProperty("--c2",colors[1]);
+  holder.innerHTML = "";
+  const fallback = document.createElement('div');
+  fallback.className = "coverFallback";
+  fallback.textContent = "♪";
+  if(track.cover){
+    const img = new Image();
+    img.alt = `${track.title} 专辑封面`;
+    img.decoding = "async";
+    img.src = track.cover;
+    img.onerror = ()=>holder.replaceChildren(fallback);
+    holder.appendChild(img);
+  }else holder.appendChild(fallback);
+}
+
+function markCurrentRecord(){
+  document.querySelectorAll('.recordCard').forEach(card=>{
+    card.classList.toggle('playing', Number(card.dataset.trackIndex) === currentTrackIndex && !trackAudio.paused);
+  });
+}
+
+function flyRecord(from,to,index){
+  if(!from || !to || !from.width || !to.width) return;
+  const colors = MUSIC_COLORS[index % MUSIC_COLORS.length];
+  const node = document.createElement('div');
+  node.className = "recordFly";
+  node.textContent = String(index + 1).padStart(2,"0");
+  Object.assign(node.style,{
+    left:`${from.left}px`,top:`${from.top}px`,width:`${from.width}px`,height:`${from.height}px`,
+    background:`conic-gradient(from 35deg,${colors[0]},${colors[1]},#4d4350,${colors[0]})`
+  });
+  document.body.appendChild(node);
+  const dx = to.left - from.left;
+  const dy = to.top - from.top;
+  const sx = to.width / from.width;
+  const sy = to.height / from.height;
+  if(prefersReducedMotion || !node.animate){
+    node.remove();
+    return;
+  }
+  node.animate([
+    { transform:"translate(0,0) scale(1)", opacity:1 },
+    { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`, opacity:.96 }
+  ],{duration:600,easing:"cubic-bezier(0.4,0,0.2,1)",fill:"forwards"}).finished.finally(()=>node.remove());
+}
+
+function openMusicTrack(index, sourceButton){
+  const tracks = window.MUSIC_TRACKS || [];
+  if(!tracks[index]) return;
+  const sourceVinyl = sourceButton && sourceButton.querySelector('.vinyl');
+  const from = sourceVinyl ? sourceVinyl.getBoundingClientRect() : null;
+  currentTrackIndex = index;
+  document.getElementById('s5').classList.add('player-active');
+  loadMusicTrack(index,true);
+  requestAnimationFrame(()=>{
+    const target = document.querySelector('.playerVinylWrap').getBoundingClientRect();
+    flyRecord(from,target,index);
+  });
+}
+
+function loadMusicTrack(index,autoplay){
+  const tracks = window.MUSIC_TRACKS || [];
+  const track = tracks[index];
+  if(!track) return;
+  currentTrackIndex = index;
+  const audio = trackAudio;
+  audio.pause();
+  audio.src = track.file;
+  audio.load();
+  document.getElementById('playerCounter').textContent = `第 ${index + 1} / ${tracks.length} 首`;
+  document.getElementById('playerTitle').textContent = track.title || "未知歌曲";
+  document.getElementById('playerArtist').textContent = track.artist || "未知歌手";
+  document.getElementById('musicProgress').max = String(track.duration || 100);
+  document.getElementById('musicProgress').value = "0";
+  document.getElementById('musicCurrent').textContent = "00:00";
+  document.getElementById('musicDuration').textContent = formatMusicTime(track.duration || 0);
+  document.getElementById('s5').classList.remove('music-playing');
+  document.getElementById('musicPlayBtn').textContent = "▶";
+  updatePlayerCover(track,index);
+  renderLyrics(track);
+  markCurrentRecord();
+  if('mediaSession' in navigator && typeof MediaMetadata !== 'undefined'){
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.title || "未知歌曲",
+      artist: track.artist || "未知歌手",
+      album: track.album || "19岁生日点播台",
+      artwork: track.cover ? [{src:track.cover,sizes:"512x512",type:"image/jpeg"}] : []
+    });
+  }
+  if(autoplay) audio.play().catch(()=>setMusicPlaying(false));
+}
+
+function setMusicPlaying(playing){
+  const s5 = document.getElementById('s5');
+  if(s5) s5.classList.toggle('music-playing',playing);
+  const btn = document.getElementById('musicPlayBtn');
+  if(btn) btn.textContent = playing ? "❚❚" : "▶";
+  const bgmBtn = document.getElementById('bgmBtn');
+  if(bgmBtn && window.musicGiftActive) bgmBtn.textContent = playing ? "🎵" : "🔇";
+  markCurrentRecord();
+}
+
+function toggleGiftMusic(){
+  const tracks = window.MUSIC_TRACKS || [];
+  if(!tracks.length) return;
+  if(currentTrackIndex < 0){
+    document.getElementById('s5').classList.add('player-active');
+    loadMusicTrack(0,true);
+    return;
+  }
+  if(trackAudio.paused) trackAudio.play().catch(()=>{});
+  else trackAudio.pause();
+}
+window.toggleGiftMusic = toggleGiftMusic;
+
+function changeTrack(delta){
+  const tracks = window.MUSIC_TRACKS || [];
+  if(!tracks.length) return;
+  const next = currentTrackIndex < 0 ? 0 : (currentTrackIndex + delta + tracks.length) % tracks.length;
+  loadMusicTrack(next,true);
+}
+
+function returnToRecordWall(){
+  const s5 = document.getElementById('s5');
+  const source = document.querySelector('.playerVinylWrap');
+  const from = source ? source.getBoundingClientRect() : null;
+  s5.classList.remove('player-active');
+  markCurrentRecord();
+  requestAnimationFrame(()=>{
+    const card = document.querySelector(`.recordCard[data-track-index="${currentTrackIndex}"] .vinyl`);
+    if(card){
+      const to = card.getBoundingClientRect();
+      flyRecord(source ? from : null,to,currentTrackIndex);
+      card.closest('.recordCard').scrollIntoView({block:"center",behavior:"smooth"});
+    }
+  });
+}
+
+function leaveMusicForFinale(){
+  startFinale();
 }
 
 /* ---------- 第6幕 艺术字祝福 + 彩纸/气泡(不用烟花) ---------- */
@@ -2087,6 +2599,10 @@ function finaleStart(){
 
   // 背景音乐改为：第一次点击任意互动按钮时开始播放
   function onFirst(e){
+    if(window.musicGiftActive){
+      document.removeEventListener('pointerdown', onFirst, true);
+      return;
+    }
     var t = e.target;
     if (t && t.closest && t.closest('.btn, .opt, button, input, [role="button"]')){
       play();
@@ -2098,6 +2614,10 @@ function finaleStart(){
   // 右下角音符：随时手动开 / 关
   btn.addEventListener('click', function(e){
     e.stopPropagation();
+    if(window.musicGiftActive && typeof window.toggleGiftMusic === 'function'){
+      window.toggleGiftMusic();
+      return;
+    }
     if (bgm.paused) { muted = false; play(); }
     else { muted = true; pause(); }
   });
