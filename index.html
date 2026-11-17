@@ -1504,7 +1504,7 @@ function startCakeIntro(){
   const overlay = document.getElementById('cakeIntro');
   const preview = overlay && overlay.querySelector('.cakeIntroPreview');
   const cake = document.getElementById('cakeSvg');
-  if(!overlay || !preview || !cake){ beginCakeBlow(); return; }
+  if(!overlay || !preview || !cake){ beginWish(); return; }
 
   const markup = new XMLSerializer().serializeToString(cake);
   const image = new Image();
@@ -1519,22 +1519,31 @@ function startCakeIntro(){
   preview.replaceChildren(image);
 }
 
+function beginWish(){
+  candlesOut = false; waitingCut = false; cakeCut = false;
+  holdVal = 0; setMeter(0);
+  document.getElementById('cakeSvg').classList.add('cardHidden');
+  document.getElementById('realCakeSvg').classList.add('show');
+  document.getElementById('cakeStage').classList.add('revealed');
+  document.getElementById('blowMeter').classList.remove('on');
+  const cutHint0 = document.getElementById('cutHint');
+  if(cutHint0) cutHint0.classList.remove('on');
+  document.getElementById('cakeHeading').textContent = "🎂 先许个愿";
+  document.getElementById('blowTip').innerHTML = "烛光正为你亮着 🕯️<br>悄悄写下一个愿望（也可以不写）";
+  document.getElementById('wishBox').classList.add('show');
+  showWishBtn();
+  chime();
+}
+
 function beginCakeBlow(){
   const tip = document.getElementById('blowTip');
   const meter = document.getElementById('blowMeter');
-  const stage = document.getElementById('cakeStage');
-  candlesOut = false;
-  waitingCut = false;
-  holdVal = 0;
-  setMeter(0);
+  holdVal = 0; setMeter(0);
   meter.classList.add('on');
-  document.getElementById('cakeSvg').classList.add('cardHidden');
-  document.getElementById('realCakeSvg').classList.add('show');
   document.getElementById('cakeHeading').textContent = "🎂 吹灭 19 岁的蜡烛";
   tip.innerHTML = "长按蛋糕上的数字蜡烛<br>蜡烛熄灭时，手机会轻轻震动";
   const cutHint = document.getElementById('cutHint');
   cutHint.classList.remove('on');
-  stage.classList.add('revealed');
   chime();
 }
 
@@ -1549,7 +1558,7 @@ function finishCakeIntro(immediate){
     overlay.classList.remove('show','slideOut');
     overlay.style.display = 'none';
     overlay.setAttribute('aria-hidden','true');
-    beginCakeBlow();
+    beginWish();
   }, wait);
 }
 
@@ -1717,47 +1726,45 @@ function doCut(){
   }, 430);
   setTimeout(()=>{
     document.getElementById('blowTip').innerHTML =
-      '第一块,切给最想见的人 🍰<br>接下来,写下你的愿望吧';
-    document.getElementById('cakeHeading').textContent = "🎂 许愿时间";
+      '第一块,切给最想见的人 🍰<br>还有两份礼物,在等你拆开';
+    document.getElementById('cakeHeading').textContent = "🍰 切好啦";
     document.getElementById('blowMeter').classList.remove('on');
-    document.getElementById('wishBox').classList.add('show');
-    showWishBtn();
+    document.getElementById('cakeBtnBox').innerHTML = "";
+    const nb = document.createElement('button');
+    nb.className = 'btn'; nb.textContent = '去拆第一份礼物 🎁';
+    nb.onclick = ()=>go(4);
+    document.getElementById('cakeBtnBox').appendChild(nb);
   }, 1380);
 }
 
 /* 愿望 */
 function showWishBtn(){
   const box = document.getElementById('cakeBtnBox');
-  if(box.childElementCount) return;
+  box.innerHTML = "";
   const b = document.createElement('button');
-  b.className = 'btn'; b.id = 'wishBtn'; b.textContent = '把愿望送上天 ✨';
-  b.onclick = sendWish;
+  b.className = 'btn'; b.id = 'wishBtn'; b.textContent = '许好了，吹蜡烛 ✨';
+  b.onclick = submitWish;
   box.appendChild(b);
   const inp = document.getElementById('wishInput');
-  inp.addEventListener('keydown', e=>{ if(e.key === 'Enter') sendWish(); });
+  inp.onkeydown = (e)=>{ if(e.key === 'Enter') submitWish(); };
 }
-function sendWish(){
-  const btn = document.getElementById('wishBtn');
+function submitWish(){
   const inp = document.getElementById('wishInput');
-  if(btn.dataset.step !== '1'){
-    const txt = (inp.value || '').trim();
-    if(txt){
-      const fly = document.createElement('div');
-      fly.className = 'wishFly'; fly.textContent = '"' + txt + '" 🕊️';
-      fly.style.bottom = '42vh';
-      document.body.appendChild(fly);
-      requestAnimationFrame(()=> fly.classList.add('go'));
-      setTimeout(()=>fly.remove(), 2900);
-    }
-    btn.dataset.step = '1';
-    btn.textContent = "愿望已发送 🌈";
-    inp.style.display = 'none';
-    sparkleSnd();
-    const r = cfx.getBoundingClientRect();
-    burst(r.width*.5, r.height*.35, 22, 'sugar', { spd:2.2, g:.008, life:60, up:1.2 });
-    return;
+  const txt = (inp.value || '').trim();
+  if(txt){
+    const fly = document.createElement('div');
+    fly.className = 'wishFly'; fly.textContent = '"' + txt + '" 🕊️';
+    fly.style.bottom = '42vh';
+    document.body.appendChild(fly);
+    requestAnimationFrame(()=> fly.classList.add('go'));
+    setTimeout(()=>fly.remove(), 2900);
   }
-  go(4);
+  sparkleSnd();
+  const r = cfx.getBoundingClientRect();
+  burst(r.width*.5, r.height*.35, 22, 'sugar', { spd:2.2, g:.008, life:60, up:1.2 });
+  document.getElementById('wishBox').classList.remove('show');
+  document.getElementById('cakeBtnBox').innerHTML = "";
+  setTimeout(beginCakeBlow, 950);
 }
 
 /* 小音效 */
