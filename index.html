@@ -1519,18 +1519,26 @@ function startCakeIntro(){
   preview.replaceChildren(image);
 }
 
+function revealRealCake(){
+  // 卡片滑出前先在同一帧完成底层替换，避免旧卡露出一帧。
+  const card = document.getElementById('cakeSvg');
+  const realCake = document.getElementById('realCakeSvg');
+  const stage = document.getElementById('cakeStage');
+  if(card) card.classList.add('cardHidden');
+  if(realCake) realCake.classList.add('show');
+  if(stage) stage.classList.add('revealed');
+}
+
 function beginCakeWish(){
   const tip = document.getElementById('blowTip');
   const meter = document.getElementById('blowMeter');
-  const stage = document.getElementById('cakeStage');
   candlesOut = false;
   wishDone = false;
   waitingCut = false;
   holdVal = 0;
   setMeter(0);
   meter.classList.remove('on');
-  document.getElementById('cakeSvg').classList.add('cardHidden');
-  document.getElementById('realCakeSvg').classList.add('show');
+  revealRealCake();
   document.getElementById('cakeHeading').textContent = "🎂 先许一个愿望";
   tip.innerHTML = "把愿望悄悄写下来<br>写好后，再去吹灭 19 岁的蜡烛";
   const cutHint = document.getElementById('cutHint');
@@ -1538,7 +1546,6 @@ function beginCakeWish(){
   document.getElementById('cakeBtnBox').innerHTML = "";
   document.getElementById('wishBox').classList.add('show');
   showWishBtn();
-  stage.classList.add('revealed');
   chime();
 }
 
@@ -1558,6 +1565,7 @@ function finishCakeIntro(immediate){
   const overlay = document.getElementById('cakeIntro');
   if(!overlay || overlay.classList.contains('slideOut')) return;
   if(cakeIntroTimer){ clearTimeout(cakeIntroTimer); cakeIntroTimer = null; }
+  revealRealCake();
   whoosh();
   overlay.classList.add('slideOut');
   const wait = immediate ? 280 : 1080;
