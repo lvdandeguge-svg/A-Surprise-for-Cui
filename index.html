@@ -433,6 +433,8 @@
   #musicPlayerView { display:none; }
   #s5.player-active #musicWallView { display:none; }
   #s5.player-active #musicPlayerView { display:flex; flex-direction:column; align-items:center; animation:musicViewIn .55s ease both; }
+  #musicPlayerView > * { transition:opacity .28s ease; }
+  #s5.opening #musicPlayerView > * { opacity:0; }
   @keyframes musicViewIn {
     from{opacity:0; transform:translateY(13px);}
     to{opacity:1; transform:none;}
@@ -480,8 +482,22 @@
     display:flex; align-items:center; justify-content:center;
     color:#fff; font-size:15px; font-weight:800;
     border:3px solid rgba(255,255,255,.75);
+    background:
+      radial-gradient(circle at 34% 27%,rgba(255,255,255,.75) 0 4%,transparent 14%),
+      repeating-radial-gradient(circle,rgba(42,30,35,.72) 0 1px,rgba(92,70,77,.34) 1.5px 3px),
+      conic-gradient(from 30deg,var(--c1),var(--c2),#4d4350,var(--c1));
     box-shadow:0 18px 38px rgba(116,65,68,.34);
     will-change:transform,opacity;
+  }
+  .recordFly::after {
+    content:""; position:absolute; inset:11%; border-radius:50%;
+    background:radial-gradient(circle,var(--c2) 0 38%,rgba(255,255,255,.82) 39% 40%,#493d47 41% 100%);
+  }
+  .recordFly span {
+    position:relative; z-index:1; display:flex; align-items:center; justify-content:center;
+    width:36%; aspect-ratio:1; border-radius:50%; font-size:13px;
+    background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.48),var(--c1) 55%,var(--c2));
+    text-shadow:0 1px 4px rgba(40,20,25,.42);
   }
   .recordTitle {
     width:100%; min-height:2.8em; font-size:clamp(11px,2.65vw,14px); line-height:1.4;
@@ -490,6 +506,7 @@
   }
   .recordCard:hover .vinyl, .recordCard:focus-visible .vinyl { transform:scale(1.075); box-shadow:0 14px 30px rgba(132,75,77,.32); }
   .recordCard.playing .vinyl { box-shadow:0 0 0 3px rgba(255,250,226,.9),0 0 24px rgba(255,177,117,.75); }
+  .recordCard.arrivalHidden { opacity:0; pointer-events:none; }
   .recordCard.playing .recordNumber::after {
     content:"♪"; position:absolute; right:-13px; top:-10px; font-size:14px;
     animation:musicNotePulse .9s ease-in-out infinite;
@@ -562,8 +579,10 @@
     transition:color .25s ease,transform .25s ease,font-size .25s ease;
   }
   .lyricLine.active {
-    color:#82434f; font-weight:800; transform:scale(1.035);
-    text-shadow:0 0 16px rgba(255,194,150,.55);
+    color:#652b38; font-size:17px; font-weight:900; transform:scale(1.07);
+    padding-top:7px; padding-bottom:7px; border-radius:12px;
+    background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,247,220,.88),rgba(255,255,255,0));
+    text-shadow:0 0 18px rgba(255,171,121,.82),0 1px 0 rgba(255,255,255,.9);
   }
   .lyricEmpty { color:#ae7b78; font-size:14px; line-height:2; text-align:center; }
   .musicControls {
@@ -2341,7 +2360,7 @@ function renderLyrics(track){
 
 function syncLyrics(time){
   if(!lyricEntries.length || lyricEntries[0].time === null) return;
-  let index = -1;
+  let index = time + .12 < lyricEntries[0].time ? 0 : -1;
   for(let i=0;i<lyricEntries.length;i++){
     if(lyricEntries[i].time <= time + .12) index = i;
     else break;
@@ -2353,7 +2372,11 @@ function syncLyrics(time){
   const line = lyricElements[index];
   line.classList.add('active');
   const scroller = document.getElementById('lyricsScroller');
-  scroller.scrollTo({ top: line.offsetTop - scroller.clientHeight / 2 + line.clientHeight / 2, behavior:'smooth' });
+  const lineRect = line.getBoundingClientRect();
+  const scrollerRect = scroller.getBoundingClientRect();
+  const targetTop = scroller.scrollTop + lineRect.top - scrollerRect.top -
+    (scroller.clientHeight - lineRect.height) / 2;
+  scroller.scrollTo({ top: Math.max(0,targetTop), behavior:'smooth' });
 }
 
 function updatePlayerCover(track,index){
@@ -2381,42 +2404,68 @@ function markCurrentRecord(){
   });
 }
 
-function flyRecord(from,to,index){
-  if(!from || !to || !from.width || !to.width) return;
+function createRecordFly(from,index){
+  if(!from || !from.width) return null;
   const colors = MUSIC_COLORS[index % MUSIC_COLORS.length];
   const node = document.createElement('div');
   node.className = "recordFly";
-  node.textContent = String(index + 1).padStart(2,"0");
+  node.style.setProperty("--c1",colors[0]);
+  node.style.setProperty("--c2",colors[1]);
+  const number = document.createElement('span');
+  number.textContent = String(index + 1).padStart(2,"0");
+  node.appendChild(number);
   Object.assign(node.style,{
-    left:`${from.left}px`,top:`${from.top}px`,width:`${from.width}px`,height:`${from.height}px`,
-    background:`conic-gradient(from 35deg,${colors[0]},${colors[1]},#4d4350,${colors[0]})`
+    left:`${from.left}px`,top:`${from.top}px`,width:`${from.width}px`,height:`${from.height}px`
   });
   document.body.appendChild(node);
+  return node;
+}
+
+function animateRecordFly(node,from,to){
+  if(!node || !from || !to || !from.width || !to.width) return Promise.resolve();
   const dx = to.left - from.left;
   const dy = to.top - from.top;
   const sx = to.width / from.width;
   const sy = to.height / from.height;
   if(prefersReducedMotion || !node.animate){
     node.remove();
-    return;
+    return Promise.resolve();
   }
-  node.animate([
-    { transform:"translate(0,0) scale(1)", opacity:1 },
-    { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`, opacity:.96 }
-  ],{duration:600,easing:"cubic-bezier(0.4,0,0.2,1)",fill:"forwards"}).finished.finally(()=>node.remove());
+  node.style.transformOrigin = "top left";
+  return new Promise(resolve=>{
+    const animation = node.animate([
+      { transform:"translate(0,0) scale(1)", opacity:1 },
+      { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`, opacity:.96 }
+    ],{duration:620,easing:"cubic-bezier(0.4,0,0.2,1)",fill:"forwards"});
+    const finish = ()=>{ node.remove(); resolve(); };
+    animation.onfinish = finish;
+    animation.oncancel = finish;
+  });
+}
+
+function flyRecord(from,to,index){
+  return animateRecordFly(createRecordFly(from,index),from,to);
 }
 
 function openMusicTrack(index, sourceButton){
   const tracks = window.MUSIC_TRACKS || [];
   if(!tracks[index]) return;
+  const s5 = document.getElementById('s5');
+  if(s5.classList.contains('opening')) return;
   const sourceVinyl = sourceButton && sourceButton.querySelector('.vinyl');
   const from = sourceVinyl ? sourceVinyl.getBoundingClientRect() : null;
+  const flyingRecord = createRecordFly(from,index);
   currentTrackIndex = index;
-  document.getElementById('s5').classList.add('player-active');
-  loadMusicTrack(index,true);
   requestAnimationFrame(()=>{
-    const target = document.querySelector('.playerVinylWrap').getBoundingClientRect();
-    flyRecord(from,target,index);
+    s5.classList.add('opening','player-active');
+    s5.scrollTop = 0;
+    loadMusicTrack(index,true);
+    requestAnimationFrame(()=>{
+      const target = document.querySelector('.playerVinylWrap').getBoundingClientRect();
+      animateRecordFly(flyingRecord,from,target).finally(()=>{
+        s5.classList.remove('opening');
+      });
+    });
   });
 }
 
@@ -2440,6 +2489,7 @@ function loadMusicTrack(index,autoplay){
   document.getElementById('musicPlayBtn').textContent = "▶";
   updatePlayerCover(track,index);
   renderLyrics(track);
+  syncLyrics(0);
   markCurrentRecord();
   if('mediaSession' in navigator && typeof MediaMetadata !== 'undefined'){
     navigator.mediaSession.metadata = new MediaMetadata({
@@ -2486,14 +2536,23 @@ function returnToRecordWall(){
   const s5 = document.getElementById('s5');
   const source = document.querySelector('.playerVinylWrap');
   const from = source ? source.getBoundingClientRect() : null;
+  const flyingRecord = createRecordFly(from,currentTrackIndex);
   s5.classList.remove('player-active');
   markCurrentRecord();
   requestAnimationFrame(()=>{
-    const card = document.querySelector(`.recordCard[data-track-index="${currentTrackIndex}"] .vinyl`);
-    if(card){
-      const to = card.getBoundingClientRect();
-      flyRecord(source ? from : null,to,currentTrackIndex);
-      card.closest('.recordCard').scrollIntoView({block:"center",behavior:"smooth"});
+    const button = document.querySelector(`.recordCard[data-track-index="${currentTrackIndex}"]`);
+    const vinyl = button && button.querySelector('.vinyl');
+    if(button) button.scrollIntoView({block:"center",behavior:"auto"});
+    if(vinyl){
+      button.classList.add('arrivalHidden');
+      requestAnimationFrame(()=>{
+        const to = vinyl.getBoundingClientRect();
+        animateRecordFly(flyingRecord,from,to).finally(()=>{
+          button.classList.remove('arrivalHidden');
+        });
+      });
+    }else if(flyingRecord){
+      flyingRecord.remove();
     }
   });
 }
