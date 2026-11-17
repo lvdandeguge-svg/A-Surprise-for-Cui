@@ -157,18 +157,16 @@
   #s3 h2, #s3 p.sub, #s3 .blowMeter, #s3 #wishBox, #s3 #cakeBtnBox { position:relative; z-index:3; }
   .cakeStage { position:relative; display:inline-block; touch-action:pan-y; }
   .cakeSvg { display:block; height:min(48vh,390px); width:auto; max-width:94vw; overflow:visible; }
-  .scene.active .cakeStage { animation:cakeIn 1.05s cubic-bezier(.2,1.5,.4,1) both; }
-  @keyframes cakeIn { from{transform:scale(.55) translateY(38px); opacity:0} to{transform:none; opacity:1} }
   /* 先弹出一张完整贺卡，再滑开露出卡片里的可互动蛋糕 */
   #cakeIntro {
     position:fixed; inset:0; z-index:120; display:flex; flex-direction:column;
     align-items:center; justify-content:center; gap:18px; opacity:0; visibility:hidden;
-    pointer-events:none; transition:opacity .35s ease, visibility .35s;
+    pointer-events:none;
   }
   #cakeIntro::before {
     content:""; position:absolute; inset:0;
-    background:radial-gradient(circle at 50% 42%,rgba(255,251,235,.94),rgba(255,227,209,.82) 42%,rgba(255,190,194,.68));
-    backdrop-filter:blur(8px); opacity:0; transition:opacity .65s ease;
+    background:radial-gradient(circle at 50% 42%,rgba(255,251,235,.99),rgba(255,229,212,.96) 44%,rgba(248,190,199,.93));
+    opacity:0; transition:opacity .48s ease;
   }
   #cakeIntro.show { opacity:1; visibility:visible; pointer-events:auto; }
   #cakeIntro.show::before { opacity:1; }
@@ -177,6 +175,8 @@
     padding:0; border-radius:4px; overflow:hidden; background:#fffaf1;
     box-shadow:0 28px 70px rgba(151,88,43,.3),0 0 0 1px rgba(208,158,73,.6);
     opacity:0; transform:translateY(42vh) scale(.28) rotate(-7deg);
+    backface-visibility:hidden;
+    will-change:transform,opacity;
   }
   #cakeIntro.show .cakeIntroCard {
     animation:cakeCardPop .92s cubic-bezier(.18,1.25,.3,1) forwards;
@@ -205,16 +205,19 @@
     16% { transform:translateX(5vw) rotate(2.3deg); }
     100% { opacity:.96; transform:translateX(-145vw) rotate(-13deg) scale(.9); }
   }
-  #cakeStage.revealed { animation:cakeReveal .85s cubic-bezier(.2,.8,.3,1) both; }
-  @keyframes cakeReveal {
-    from { opacity:.2; transform:scale(.9) translateY(18px); filter:blur(5px); }
-    to { opacity:1; transform:none; filter:none; }
-  }
   #cakeSvg.cardHidden { display:none; }
   #realCakeSvg { display:none; }
+  #realCakeSvg.prepared {
+    display:block; opacity:1; transform:none; filter:none; animation:none;
+  }
   #realCakeSvg.show {
     display:block; animation:realCakeIn 1.05s cubic-bezier(.18,.95,.28,1.08) both;
   }
+  body.cake-transition #sky { opacity:0 !important; transition:opacity .18s ease; }
+  body.cake-transition .aurora,
+  body.cake-transition .garland b,
+  body.cake-transition .rballoon,
+  body.cake-transition .window .st { animation-play-state:paused !important; }
   #realNumberCandles, #realNumberCandles * {
     cursor:pointer; touch-action:none;
     user-select:none !important; -webkit-user-select:none !important;
@@ -936,7 +939,7 @@
           </g>
 
           <!-- 最下层：真实奶油侧面、裱花与水果 -->
-          <g id="realBottomTier" filter="url(#rTexture)">
+          <g id="realBottomTier">
             <path d="M62 318 L62 393 C62 410 111 422 180 422 C249 422 298 410 298 393 L298 318 Z"
               fill="url(#rIvorySide)"/>
             <ellipse cx="180" cy="318" rx="118" ry="25" fill="url(#rIvoryTop)"/>
@@ -968,7 +971,7 @@
           </g>
 
           <!-- 中层 -->
-          <g id="realMiddleTier" filter="url(#rTexture)">
+          <g id="realMiddleTier">
             <path d="M94 232 L94 312 C94 328 130 337 180 337 C230 337 266 328 266 312 L266 232 Z"
               fill="url(#rBlushSide)"/>
             <ellipse cx="180" cy="232" rx="86" ry="22" fill="url(#rBlushTop)"/>
@@ -994,7 +997,7 @@
           </g>
 
           <!-- 顶层 -->
-          <g id="realTopTier" filter="url(#rTexture)">
+          <g id="realTopTier">
             <path d="M123 157 L123 229 C123 242 149 249 180 249 C211 249 237 242 237 229 L237 157 Z"
               fill="url(#rIvorySide)"/>
             <ellipse cx="180" cy="157" rx="58" ry="18" fill="url(#rIvoryTop)"/>
@@ -1064,7 +1067,7 @@
           </g>
 
           <!-- 一刀后的真实横切面与分离切片 -->
-          <g id="cutFace" opacity="0" filter="url(#rSmallShadow)">
+          <g id="cutFace" opacity="0" display="none" filter="url(#rSmallShadow)">
             <path d="M226 327 L267 323 L291 401 L249 414 Z" fill="url(#rSpongeCut)" stroke="#9c6042" stroke-width="1.1"/>
             <path d="M227 341 L271 337 M231 353 L277 349 M236 368 L283 363 M241 384 L287 379"
               fill="none" stroke="#fff0d7" stroke-width="2.5" opacity=".88"/>
@@ -1072,7 +1075,7 @@
             <path d="M226 327 L248 414 L249 414 L267 323 Z" fill="#f0c691" opacity=".28"/>
             <path d="M249 414 Q268 413 291 401" fill="none" stroke="#c89363" stroke-width="2" opacity=".8"/>
           </g>
-          <g id="slicePiece" opacity="0" filter="url(#rShadow)">
+          <g id="slicePiece" opacity="0" display="none" filter="url(#rShadow)">
             <g id="realSliceArt">
               <path d="M227 327 C243 315 269 314 282 322 C273 336 250 342 227 340 Z"
                 fill="url(#rIvoryTop)" stroke="#d4b17f" stroke-width=".7"/>
@@ -1256,6 +1259,7 @@ function shimmerSnd(){ [1567.98,2093,2637,3135.96].forEach((f,i)=>tone(f, i*.07,
 const PASTEL = ["#ff8fa8","#ffc46b","#8fd8c0","#a8b8ff","#ff9e7a","#e8a8ff"];
 const sky = document.getElementById('sky'), sctx = sky.getContext('2d');
 let W, H, motes = [], sparks = [], petals = [], balloons = [];
+let skyPaused = false;
 function resizeSky(){ W = sky.width = innerWidth; H = sky.height = innerHeight; initSky(); }
 function initSky(){
   motes = []; sparks = []; petals = []; balloons = [];
@@ -1265,7 +1269,7 @@ function initSky(){
   for(let i=0;i<3;i++) balloons.push({x:W*(.15+Math.random()*.7), y:H*(.5+Math.random()*.8), vy:.16+Math.random()*.14, ph:Math.random()*7, sz:13+Math.random()*7, c:PASTEL[(i*2)%PASTEL.length]});
 }
 function drawSky(t){
-  if(document.hidden){ requestAnimationFrame(drawSky); return; }
+  if(document.hidden || skyPaused){ requestAnimationFrame(drawSky); return; }
   sctx.clearRect(0,0,W,H);
   for(const m of motes){
     m.y -= m.vy; m.x += Math.sin(t/1500 + m.ph)*.3;
@@ -1305,6 +1309,10 @@ function drawSky(t){
   }
   sctx.globalAlpha = 1;
   requestAnimationFrame(drawSky);
+}
+function setCakeTransitionMode(on){
+  skyPaused = on;
+  document.body.classList.toggle('cake-transition', on);
 }
 let skyOn = false;
 function startSky(){ if(skyOn) return; skyOn = true; resizeSky(); requestAnimationFrame(drawSky); }
@@ -1439,6 +1447,9 @@ function initPuzzle(){
     board.appendChild(d);
   });
   updateTileLeft();
+  const prepare = ()=>prepareCakeIntroAsset();
+  if('requestIdleCallback' in window) requestIdleCallback(prepare, {timeout:1200});
+  else setTimeout(prepareCakeIntroAsset, 420);
 }
 function swapTiles(p1, p2, el1, el2){
   const tmp = tiles[p1]; tiles[p1] = tiles[p2]; tiles[p2] = tmp;
@@ -1453,7 +1464,9 @@ function checkPuzzle(){
   updateTileLeft();
   if(puzzleDone) return;
   if(tiles.every((v,i)=>v===i)){
-    puzzleDone = true; chime();
+    puzzleDone = true;
+    setCakeTransitionMode(true);
+    chime();
     setTimeout(()=>{
       document.getElementById('reveal').classList.add('show');
       setTimeout(()=>{
@@ -1575,36 +1588,52 @@ function buildGarland(){
   g.innerHTML = html;
 }
 
-let cakeIntroStarted = false, cakeIntroTimer = null;
+let cakeIntroStarted = false, cakeIntroTimer = null, cakeIntroImageUrl = "";
+function prepareCakeIntroAsset(){
+  if(cakeIntroImageUrl) return cakeIntroImageUrl;
+  const cake = document.getElementById('cakeSvg');
+  if(!cake) return "";
+  const markup = new XMLSerializer().serializeToString(cake);
+  try{
+    cakeIntroImageUrl = URL.createObjectURL(new Blob([markup], {type:"image/svg+xml;charset=utf-8"}));
+  }catch(_e){
+    cakeIntroImageUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(markup);
+  }
+  const warm = new Image();
+  warm.decoding = "async";
+  warm.src = cakeIntroImageUrl;
+  return cakeIntroImageUrl;
+}
+
 function startCakeIntro(){
   if(cakeIntroStarted) return;
   cakeIntroStarted = true;
+  setCakeTransitionMode(true);
   const overlay = document.getElementById('cakeIntro');
   const preview = overlay && overlay.querySelector('.cakeIntroPreview');
   const cake = document.getElementById('cakeSvg');
   if(!overlay || !preview || !cake){ beginCakeWish(); return; }
 
-  const markup = new XMLSerializer().serializeToString(cake);
   const image = new Image();
   image.alt = "白金纸雕生日蛋糕贺卡";
+  image.decoding = "async";
   image.onload = ()=>{
     overlay.setAttribute('aria-hidden','false');
-    requestAnimationFrame(()=>overlay.classList.add('show'));
+    overlay.classList.add('show');
+    revealRealCake();
     cakeIntroTimer = setTimeout(finishCakeIntro, 2050);
   };
   image.onerror = ()=>finishCakeIntro(true);
-  image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(markup);
+  image.src = prepareCakeIntroAsset();
   preview.replaceChildren(image);
 }
 
 function revealRealCake(){
-  // 卡片滑出前先在同一帧完成底层替换，避免旧卡露出一帧。
+  // 卡片滑出前预先放好静态实体蛋糕，滑出时只合成移动的卡片层。
   const card = document.getElementById('cakeSvg');
   const realCake = document.getElementById('realCakeSvg');
-  const stage = document.getElementById('cakeStage');
   if(card) card.classList.add('cardHidden');
-  if(realCake) realCake.classList.add('show');
-  if(stage) stage.classList.add('revealed');
+  if(realCake) realCake.classList.add('prepared');
 }
 
 function beginCakeWish(){
@@ -1624,6 +1653,7 @@ function beginCakeWish(){
   document.getElementById('cakeBtnBox').innerHTML = "";
   document.getElementById('wishBox').classList.add('show');
   showWishBtn();
+  setTimeout(()=>setCakeTransitionMode(false), 180);
   chime();
 }
 
@@ -1707,6 +1737,7 @@ function initRoom(){
   ['pointerup','pointercancel'].forEach(ev=> stage.addEventListener(ev, ()=>{ moving = false; }));
 
   // 完整顺序：卡片滑出 → 许愿 → 吹灭 19 蜡烛 → 切下第一块。
+  setCakeTransitionMode(true);
   setTimeout(startCakeIntro, 220);
 }
 
@@ -1809,8 +1840,11 @@ function doCut(){
   sawSnd();
   if(navigator.vibrate) navigator.vibrate(28);
   setTimeout(()=>{
-    document.getElementById('cutFace').setAttribute('opacity','1');
+    const cutFace = document.getElementById('cutFace');
+    cutFace.setAttribute('display','inline');
+    cutFace.setAttribute('opacity','1');
     const sp = document.getElementById('slicePiece');
+    sp.setAttribute('display','inline');
     sp.setAttribute('opacity','1');
     sp.style.transformOrigin = 'center';
     sp.style.transition = "transform .88s cubic-bezier(.2,.85,.28,1)";
