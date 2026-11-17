@@ -159,6 +159,57 @@
   .cakeSvg { display:block; height:min(48vh,390px); width:auto; max-width:94vw; overflow:visible; }
   .scene.active .cakeStage { animation:cakeIn 1.05s cubic-bezier(.2,1.5,.4,1) both; }
   @keyframes cakeIn { from{transform:scale(.55) translateY(38px); opacity:0} to{transform:none; opacity:1} }
+  /* 先弹出一张完整贺卡，再滑开露出卡片里的可互动蛋糕 */
+  #cakeIntro {
+    position:fixed; inset:0; z-index:120; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:18px; opacity:0; visibility:hidden;
+    pointer-events:none; transition:opacity .35s ease, visibility .35s;
+  }
+  #cakeIntro::before {
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 42%,rgba(255,251,235,.94),rgba(255,227,209,.82) 42%,rgba(255,190,194,.68));
+    backdrop-filter:blur(8px); opacity:0; transition:opacity .65s ease;
+  }
+  #cakeIntro.show { opacity:1; visibility:visible; pointer-events:auto; }
+  #cakeIntro.show::before { opacity:1; }
+  .cakeIntroCard {
+    position:relative; z-index:1; width:min(76vw,306px); aspect-ratio:360/460;
+    padding:0; border-radius:4px; overflow:hidden; background:#fffaf1;
+    box-shadow:0 28px 70px rgba(151,88,43,.3),0 0 0 1px rgba(208,158,73,.6);
+    opacity:0; transform:translateY(42vh) scale(.28) rotate(-7deg);
+  }
+  #cakeIntro.show .cakeIntroCard {
+    animation:cakeCardPop .92s cubic-bezier(.18,1.25,.3,1) forwards;
+  }
+  #cakeIntro.slideOut .cakeIntroCard {
+    animation:cakeCardSlide 1.08s cubic-bezier(.45,.02,.75,.5) forwards;
+  }
+  #cakeIntro.slideOut::before { opacity:0; transition:opacity .72s ease; }
+  .cakeIntroPreview, .cakeIntroPreview img { display:block; width:100%; height:100%; }
+  .cakeIntroPreview img { object-fit:contain; }
+  .cakeIntroHint {
+    position:relative; z-index:1; color:#a4623f; font-size:13px; letter-spacing:2px;
+    padding:8px 16px; border-radius:999px; background:rgba(255,255,255,.58);
+    box-shadow:0 5px 18px rgba(154,92,55,.12);
+    opacity:0; animation:fadeIn .7s .72s ease both;
+  }
+  #cakeIntro.slideOut .cakeIntroHint { opacity:0; transition:opacity .2s; }
+  @keyframes cakeCardPop {
+    0% { opacity:0; transform:translateY(42vh) scale(.28) rotate(-7deg); }
+    58% { opacity:1; transform:translateY(-13px) scale(1.035) rotate(1.2deg); }
+    78% { transform:translateY(4px) scale(.992) rotate(-.5deg); }
+    100% { opacity:1; transform:none; }
+  }
+  @keyframes cakeCardSlide {
+    0% { opacity:1; transform:none; }
+    16% { transform:translateX(5vw) rotate(2.3deg); }
+    100% { opacity:.96; transform:translateX(-145vw) rotate(-13deg) scale(.9); }
+  }
+  #cakeStage.revealed { animation:cakeReveal .85s cubic-bezier(.2,.8,.3,1) both; }
+  @keyframes cakeReveal {
+    from { opacity:.2; transform:scale(.9) translateY(18px); filter:blur(5px); }
+    to { opacity:1; transform:none; filter:none; }
+  }
   #cakeFx { position:absolute; inset:0; pointer-events:none; z-index:6; }
   .candleGlow { position:absolute; left:50%; top:13%; width:42%; aspect-ratio:1; transform:translate(-50%,-18%);
     background:radial-gradient(circle, rgba(255,239,174,.72) 0%, rgba(255,198,103,.25) 38%, transparent 72%);
@@ -694,7 +745,12 @@
       </div>
     </div>
 
-    <h2 class="glow" style="margin-top:.6vh">🎂 许愿时间</h2>
+    <div id="cakeIntro" aria-hidden="true">
+      <div class="cakeIntroCard"><div class="cakeIntroPreview"></div></div>
+      <div class="cakeIntroHint">一张贺卡，正从蛋糕里跳出来…</div>
+    </div>
+
+    <h2 class="glow" id="cakeHeading" style="margin-top:.6vh">🍰 先切下第一块</h2>
     <p class="sub" id="blowTip">暖暖的房间里,烛光在等你<br>对着手机轻轻吹一口气,或按住火苗吹一吹</p>
     <div class="blowMeter" id="blowMeter"><i id="blowBar"></i></div>
     <div id="wishBox">
@@ -1156,6 +1212,63 @@ function buildGarland(){
   g.innerHTML = html;
 }
 
+let cakeIntroStarted = false, cakeIntroTimer = null;
+function startCakeIntro(){
+  if(cakeIntroStarted) return;
+  cakeIntroStarted = true;
+  const overlay = document.getElementById('cakeIntro');
+  const preview = overlay && overlay.querySelector('.cakeIntroPreview');
+  const cake = document.getElementById('cakeSvg');
+  if(!overlay || !preview || !cake){ beginCakeCut(); return; }
+
+  const markup = new XMLSerializer().serializeToString(cake);
+  const image = new Image();
+  image.alt = "白金纸雕生日蛋糕贺卡";
+  image.onload = ()=>{
+    overlay.setAttribute('aria-hidden','false');
+    requestAnimationFrame(()=>overlay.classList.add('show'));
+    cakeIntroTimer = setTimeout(finishCakeIntro, 2050);
+  };
+  image.onerror = ()=>finishCakeIntro(true);
+  image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(markup);
+  preview.replaceChildren(image);
+}
+
+function beginCakeCut(){
+  const tip = document.getElementById('blowTip');
+  const meter = document.getElementById('blowMeter');
+  const stage = document.getElementById('cakeStage');
+  if(micTimer){ clearInterval(micTimer); micTimer = null; }
+  candlesOut = true;
+  waitingCut = true;
+  meter.classList.remove('on');
+  document.getElementById('candleGlow').classList.add('off');
+  document.getElementById('room').classList.add('dark');
+  document.getElementById('nc1').classList.add('out');
+  document.getElementById('cakeHeading').textContent = "🍰 先切下第一块";
+  tip.innerHTML = "卡片里的蛋糕，已经来到你面前<br>在蛋糕上横着划一刀，切下第一块";
+  const cutHint = document.getElementById('cutHint');
+  cutHint.textContent = "在蛋糕上横着划一刀，切下第一块 🍰";
+  cutHint.classList.add('on');
+  stage.classList.add('revealed');
+  chime();
+}
+
+function finishCakeIntro(immediate){
+  const overlay = document.getElementById('cakeIntro');
+  if(!overlay || overlay.classList.contains('slideOut')) return;
+  if(cakeIntroTimer){ clearTimeout(cakeIntroTimer); cakeIntroTimer = null; }
+  whoosh();
+  overlay.classList.add('slideOut');
+  const wait = immediate ? 280 : 1080;
+  setTimeout(()=>{
+    overlay.classList.remove('show','slideOut');
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden','true');
+    beginCakeCut();
+  }, wait);
+}
+
 /* 房间入口 */
 function initRoom(){
   if(roomInited){ sizeCakeFx(); return; }
@@ -1199,8 +1312,8 @@ function initRoom(){
   });
   ['pointerup','pointercancel'].forEach(ev=> stage.addEventListener(ev, ()=>{ moving = false; }));
 
-  initMic();
-  document.getElementById('blowMeter').classList.add('on');
+  // 这一版先由贺卡滑出展示蛋糕，再直接进入切蛋糕互动。
+  setTimeout(startCakeIntro, 220);
 }
 
 function bitBubble(text){
@@ -1333,6 +1446,7 @@ function doCut(){
     sparkleSnd();
     document.getElementById('blowTip').innerHTML =
       '第一块,切给最想见的人 🍰<br>接下来,写下你的愿望吧';
+    document.getElementById('cakeHeading').textContent = "🎂 许愿时间";
     document.getElementById('blowMeter').classList.remove('on');
     document.getElementById('wishBox').classList.add('show');
     showWishBtn();
