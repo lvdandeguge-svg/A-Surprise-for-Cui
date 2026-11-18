@@ -38,14 +38,16 @@
   h1 { font-size:27px; letter-spacing:2px; margin-bottom:14px; font-weight:700; color:#8a4a56; }
   h2 { font-size:21px; margin-bottom:12px; font-weight:700; letter-spacing:1px; color:#8a4a56; }
   p.sub { color:#a06a72; font-size:15px; line-height:1.9; margin-bottom:18px; }
-  .inviteScene h1 {
-    font-size:clamp(34px,9vw,42px); letter-spacing:3px; margin-bottom:18px;
-  }
   .inviteScene p.sub {
     font-size:17px; line-height:2.05; max-width:340px; margin-bottom:22px; color:#946067;
   }
   .inviteScene .balloon { font-size:60px; margin-bottom:12px; }
   .inviteScene .envelope { font-size:64px; margin-bottom:8px; }
+  .inviteScene.inviteLeaving { animation:inviteSceneOut .42s ease forwards; pointer-events:none; }
+  @keyframes inviteSceneOut {
+    from{opacity:1; transform:scale(1);}
+    to{opacity:0; transform:scale(1.025);}
+  }
   .glow { text-shadow:0 2px 0 rgba(255,255,255,.7), 0 0 22px rgba(255,170,150,.65); }
   .gold { color:#fff3d6; text-shadow:0 0 16px rgba(255,200,110,.9); }
   .btn {
@@ -712,9 +714,12 @@
   .foot.in { animation:fadeIn 2s ease both; }
 
 /* ============ wax seal unseal gate ============ */
-#sealGate{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;
+#sealGate{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;
   background:radial-gradient(120% 90% at 50% 18%, #f7e4d3 0%, #f0cdbb 42%, #e7b39f 100%);
-  transition:opacity .7s ease, visibility .7s;overflow:hidden;}
+  opacity:0; transition:opacity .65s ease, visibility .65s;overflow:hidden;}
+#sealGate.mounted{display:flex;}
+#sealGate.open{opacity:1;visibility:visible;}
+#sealGate.open .sg-env{opacity:1;transform:none;}
 #sealGate, #sealGate * {
   user-select:none !important; -webkit-user-select:none !important;
   -webkit-touch-callout:none !important; -webkit-user-drag:none;
@@ -724,7 +729,8 @@
   color:#a9624f;opacity:.85;font-weight:600;}
 .sg-skip{position:absolute;top:16px;right:18px;font-size:14px;color:#9c5a48;opacity:.85;cursor:pointer;
   padding:10px;-webkit-tap-highlight-color:transparent;}
-.sg-env{position:relative;width:min(78vw,330px);aspect-ratio:5/3.6;filter:drop-shadow(0 22px 40px rgba(150,80,60,.32));}
+.sg-env{position:relative;width:min(78vw,330px);aspect-ratio:5/3.6;filter:drop-shadow(0 22px 40px rgba(150,80,60,.32));
+  opacity:0;transform:scale(.9);transition:opacity .55s ease,transform .62s cubic-bezier(.2,.8,.25,1);}
 .sg-pouch{position:absolute;inset:0;border-radius:14px;
   background:linear-gradient(160deg,#fbe3cf,#f3c7ab 60%,#eab897);border:1px solid rgba(190,120,90,.35);}
 .sg-pouch:after{content:"";position:absolute;left:0;right:0;bottom:0;height:60%;
@@ -819,10 +825,9 @@
   <!-- 第1幕 邀请函 -->
   <section class="scene inviteScene" id="s1">
     <span class="balloon">🎈</span>
-    <h1 class="glow">致 <span id="nameTag0">ABC</span></h1>
     <p class="sub">有一封信,出发于云端<br>它穿过彩虹、风铃和晚风<br>只为在今晚抵达你手里</p>
     <span class="envelope">💌</span>
-    <button class="btn" onclick="go(2)">开启惊喜 ✨</button>
+    <button class="btn" onclick="enterSealFromInvite()">打开这封信 ✉️</button>
   </section>
 
   <!-- 第2幕 拼图 -->
@@ -1510,7 +1515,6 @@ const CONFIG = {
 };
 /* =========================================================== */
 
-document.getElementById('nameTag0').textContent = CONFIG.name;
 document.getElementById('revealDate').textContent = CONFIG.birthdayLunar;
 document.getElementById('revealSub').textContent = "公历 " + CONFIG.birthdaySolar + " · " + CONFIG.lunarYear;
 document.getElementById('revealAge').textContent = CONFIG.age + "岁,你好!";
@@ -1620,7 +1624,7 @@ addEventListener('resize', ()=>{ if(skyOn) resizeSky(); });
 setTimeout(startSky, 320);
 
 /* ---------- 场景管理 ---------- */
-const KEY = "birthday-progress-v2";
+const KEY = "birthday-progress-v3";
 function go(i){
   document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+i).classList.add('active');
@@ -1640,6 +1644,14 @@ function replay(){
 }
 function restartExperience(){
   if(confirm("要从第一幕重新开始吗？当前进度会清除。")) replay();
+}
+function enterSealFromInvite(){
+  const invite = document.getElementById('s1');
+  if(!invite || invite.classList.contains('inviteLeaving')) return;
+  invite.classList.add('inviteLeaving');
+  setTimeout(()=>{
+    if(typeof window.openSealGate === 'function') window.openSealGate();
+  },380);
 }
 
 /* ---------- 第1幕 问答 ---------- */
@@ -1679,7 +1691,7 @@ function answerQuiz(i, el){
     fb.textContent = item.anyCorrect ? item.reacts[i] : "✨ 答对了!又亮了一颗星";
     document.querySelectorAll('.opt').forEach(b=>b.onclick=null);
     // 留出足够时间读完答对后的反馈，再切到下一题
-    setTimeout(()=>{ quizIdx++; if(quizIdx < QUIZ.length) renderQuiz(); else go(1); }, 2300);
+    setTimeout(()=>{ quizIdx++; if(quizIdx < QUIZ.length) renderQuiz(); else go(2); }, 2300);
   } else {
     el.classList.add('wrong');
     fb.textContent = item.wrong[i];
@@ -2828,12 +2840,29 @@ function finaleStart(){
   var skip=document.getElementById('sgSkip');
   if(!gate) return;
   var C=339.29, DUR=1700, need=1700;
-  var raf=null, holding=false, doneLock=false;
+  var raf=null, holding=false, doneLock=false, quizOpened=false;
   function setProg(p){ ring.style.strokeDashoffset=(C*(1-p)).toFixed(2); }
   function hide(instant){
-    if(instant){ gate.classList.add('gone'); gate.style.display='none'; return; }
+    gate.classList.remove('open');
+    if(instant){
+      gate.classList.remove('mounted');
+      gate.classList.add('gone'); gate.style.display='none'; return;
+    }
     gate.classList.add('gone');
-    setTimeout(function(){ gate.style.display='none'; },760);
+    setTimeout(function(){ gate.style.display='none'; gate.classList.remove('mounted'); },760);
+  }
+  function openSealGate(){
+    if(doneLock) return;
+    gate.style.display='flex';
+    gate.classList.remove('gone');
+    gate.classList.add('mounted');
+    requestAnimationFrame(function(){ gate.classList.add('open'); });
+  }
+  window.openSealGate=openSealGate;
+  function revealQuiz(){
+    if(quizOpened) return;
+    quizOpened=true;
+    go(0);
   }
   function markDone(){ try{ localStorage.setItem(SEAL_KEY,'1'); }catch(e){} }
   function spawnSparks(){
@@ -2855,8 +2884,8 @@ function finaleStart(){
     hint.style.opacity='0';
     setTimeout(function(){ flap.classList.add('open'); },260);
     setTimeout(function(){ letter.classList.add('rise'); },520);
-    // 信纸完全展开后仍需停留一会儿，避免文字刚出现就整层淡出
-    setTimeout(function(){ hide(false); },3500);
+    // 信纸完全展开后停留片刻，再淡入问答页
+    setTimeout(function(){ revealQuiz(); hide(false); },3500);
   }
   function pressDown(e){
     if(doneLock) return;
@@ -2892,7 +2921,13 @@ function finaleStart(){
   });
   window.addEventListener('pointerup',pressUp);
   window.addEventListener('pointercancel',pressUp);
-  skip.addEventListener('click',function(){ if(doneLock) return; doneLock=true; markDone(); hide(false); });
+  skip.addEventListener('click',function(){
+    if(doneLock) return;
+    doneLock=true;
+    markDone();
+    revealQuiz();
+    hide(false);
+  });
   var saved=0; try{ saved=parseInt(localStorage.getItem(KEY)||'0',10)||0; }catch(e){}
   var already=false; try{ already=localStorage.getItem(SEAL_KEY)==='1'; }catch(e){}
   if(already || saved>0){ hide(true); }
@@ -2900,8 +2935,8 @@ function finaleStart(){
 /* ---------- boot ---------- */
 (function boot(){
   requestAnimationFrame(()=>document.body.classList.add('ready'));
-  let saved = 0;
-  try { saved = parseInt(localStorage.getItem(KEY)||"0",10); if(isNaN(saved)) saved=0; } catch(e){}
+  let saved = 1;
+  try { saved = parseInt(localStorage.getItem(KEY)||"1",10); if(isNaN(saved)) saved=1; } catch(e){}
   go(saved);
 })();
 </script>
