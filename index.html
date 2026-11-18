@@ -38,6 +38,14 @@
   h1 { font-size:27px; letter-spacing:2px; margin-bottom:14px; font-weight:700; color:#8a4a56; }
   h2 { font-size:21px; margin-bottom:12px; font-weight:700; letter-spacing:1px; color:#8a4a56; }
   p.sub { color:#a06a72; font-size:15px; line-height:1.9; margin-bottom:18px; }
+  .inviteScene h1 {
+    font-size:clamp(34px,9vw,42px); letter-spacing:3px; margin-bottom:18px;
+  }
+  .inviteScene p.sub {
+    font-size:17px; line-height:2.05; max-width:340px; margin-bottom:22px; color:#946067;
+  }
+  .inviteScene .balloon { font-size:60px; margin-bottom:12px; }
+  .inviteScene .envelope { font-size:64px; margin-bottom:8px; }
   .glow { text-shadow:0 2px 0 rgba(255,255,255,.7), 0 0 22px rgba(255,170,150,.65); }
   .gold { color:#fff3d6; text-shadow:0 0 16px rgba(255,200,110,.9); }
   .btn {
@@ -643,6 +651,10 @@
     .recordCard .vinyl { width:clamp(62px,19vw,88px); }
     .musicWallFooter p { max-width:280px; }
   }
+  @media (max-width:360px){
+    .wishGrid { grid-template-columns:1fr; width:min(90vw,320px); gap:10px; margin-bottom:22px; }
+    .wishGrid .wishCard { min-height:0; }
+  }
   @media (prefers-reduced-motion: reduce){
     .playerVinyl::before,.musicFinaleBtn,.music-wall-notes span,.recordCard.playing .recordCoverThumb::after,
     #s5.returning .playerVinylWrap,.recordCard.wallArrive { animation:none; }
@@ -650,7 +662,38 @@
 
   /* ---------- 结尾艺术字 ---------- */
   #fx { position:fixed; inset:0; z-index:40; pointer-events:none; display:none; }
-  #finaleLines { line-height:2.5; font-size:17px; max-width:340px; margin:0 auto; color:#8a4a56; font-weight:500; }
+  #finaleLines { line-height:2.5; font-size:17px; width:100%; max-width:430px; margin:0 auto; color:#8a4a56; font-weight:500; }
+  .wishGrid {
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px;
+    width:min(92vw,430px); margin:0 auto 28px; text-align:left;
+  }
+  .wishGrid .wishCard {
+    position:relative; min-height:104px; padding:25px 14px 14px 17px;
+    border-radius:18px; border:1px solid rgba(183,120,87,.24);
+    background:linear-gradient(145deg,rgba(255,253,246,.92),rgba(255,238,220,.82));
+    box-shadow:0 9px 24px rgba(140,78,73,.12),inset 0 1px 0 rgba(255,255,255,.82);
+    font-size:14.5px; line-height:1.82; color:#87505a;
+  }
+  .wishGrid .wishCard::before {
+    content:"✦"; position:absolute; left:15px; top:7px;
+    color:#d69b57; font-size:11px; opacity:.85;
+  }
+  .wishGrid .wishCard:nth-child(2) {
+    background:linear-gradient(145deg,rgba(255,248,249,.94),rgba(255,224,225,.8));
+    border-color:rgba(201,126,139,.24);
+  }
+  .wishGrid .wishCard:nth-child(3) {
+    background:linear-gradient(145deg,rgba(250,255,247,.94),rgba(226,241,220,.82));
+    border-color:rgba(136,170,123,.24);
+  }
+  .wishGrid .wishCard:nth-child(4) {
+    background:linear-gradient(145deg,rgba(249,250,255,.94),rgba(230,226,246,.84));
+    border-color:rgba(145,132,183,.24);
+  }
+  #finaleLines .birthdayWish {
+    margin:0 auto; max-width:360px; line-height:2; text-align:center;
+    font-size:19px; letter-spacing:1px;
+  }
   .ch { display:inline-block; opacity:0; filter:blur(9px); transform:translateY(8px) scale(1.2); }
   .ln.go .ch { animation:chIn .8s cubic-bezier(.2,.9,.3,1) forwards; }
   @keyframes chIn { to { opacity:1; filter:blur(0); transform:none; } }
@@ -764,22 +807,22 @@
 <button id="bgmBtn" aria-label="bgm" style="position:fixed;right:18px;bottom:18px;z-index:9999;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.55);backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(200,110,120,.35);font-size:22px;line-height:48px;text-align:center;padding:0;cursor:pointer;transition:transform .2s,background .3s;-webkit-tap-highlight-color:transparent;">🎵</button>
 <main>
 
-  <!-- 第0幕 邀请函 -->
+  <!-- 第0幕 问答 -->
   <section class="scene" id="s0">
-    <span class="balloon">🎈</span>
-    <h1 class="glow">致 <span id="nameTag0">ABC</span></h1>
-    <p class="sub">有一封信,出发于云端<br>它穿过彩虹、风铃和晚风<br>只为在今晚抵达你手里</p>
-    <span class="envelope">💌</span>
-    <button class="btn" onclick="go(1)">开启惊喜 ✨</button>
-  </section>
-
-  <!-- 第1幕 问答 -->
-  <section class="scene" id="s1">
     <div class="stars" id="quizStars">☆ ☆ ☆</div>
     <h2>默契小测 ✨</h2>
     <div id="quizQ"></div>
     <div id="quizOpts"></div>
     <div id="quizFeedback"></div>
+  </section>
+
+  <!-- 第1幕 邀请函 -->
+  <section class="scene inviteScene" id="s1">
+    <span class="balloon">🎈</span>
+    <h1 class="glow">致 <span id="nameTag0">ABC</span></h1>
+    <p class="sub">有一封信,出发于云端<br>它穿过彩虹、风铃和晚风<br>只为在今晚抵达你手里</p>
+    <span class="envelope">💌</span>
+    <button class="btn" onclick="go(2)">开启惊喜 ✨</button>
   </section>
 
   <!-- 第2幕 拼图 -->
@@ -1421,11 +1464,13 @@
   <!-- 第6幕 祝福 -->
   <section class="scene" id="s6">
     <div id="finaleLines">
-      <div class="ln">愿你喜欢的歌,永远有下一首;</div>
-      <div class="ln">愿你走的路,都有暖光引路;</div>
-      <div class="ln">愿快乐像今天的风,不请自来。</div>
-      <div class="ln">世界很大,而19岁的你,才刚刚开始发光。</div>
-      <div class="ln shimmer">生日快乐,不止今天。🎂</div>
+      <div class="wishGrid">
+        <div class="ln wishCard">愿你喜欢的歌,永远有下一首;</div>
+        <div class="ln wishCard">愿你走的路,都有暖光引路;</div>
+        <div class="ln wishCard">愿快乐像今天的风,不请自来。</div>
+        <div class="ln wishCard">世界很大,而19岁的你,才刚刚开始发光。</div>
+      </div>
+      <div class="ln shimmer birthdayWish">生日快乐,不止今天。🎂</div>
     </div>
     <div class="endmark" id="endMark">· FIN ·</div>
     <div class="foot" id="footBox">
@@ -1575,12 +1620,12 @@ addEventListener('resize', ()=>{ if(skyOn) resizeSky(); });
 setTimeout(startSky, 320);
 
 /* ---------- 场景管理 ---------- */
-const KEY = "***";
+const KEY = "birthday-progress-v2";
 function go(i){
   document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+i).classList.add('active');
   try { localStorage.setItem(KEY, i); } catch(e){}
-  if(i===1) renderQuiz();
+  if(i===0) renderQuiz();
   if(i===2) initPuzzle();
   if(i===3) initRoom();
   if(i===5) initMusicWall();
@@ -1634,7 +1679,7 @@ function answerQuiz(i, el){
     fb.textContent = item.anyCorrect ? item.reacts[i] : "✨ 答对了!又亮了一颗星";
     document.querySelectorAll('.opt').forEach(b=>b.onclick=null);
     // 留出足够时间读完答对后的反馈，再切到下一题
-    setTimeout(()=>{ quizIdx++; if(quizIdx < QUIZ.length) renderQuiz(); else go(2); }, 2300);
+    setTimeout(()=>{ quizIdx++; if(quizIdx < QUIZ.length) renderQuiz(); else go(1); }, 2300);
   } else {
     el.classList.add('wrong');
     fb.textContent = item.wrong[i];
