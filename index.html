@@ -41,7 +41,7 @@
   .inviteScene {
     background-color:#f6e7dc;
     background-image:
-      linear-gradient(180deg,rgba(255,248,240,.45) 0%,rgba(255,238,225,.58) 52%,rgba(255,244,232,.78) 100%),
+      linear-gradient(180deg,rgba(255,248,240,.24) 0%,rgba(255,238,225,.34) 52%,rgba(255,244,232,.58) 100%),
       url("assets/invite-bg.jpg");
     background-size:cover,cover;
     background-position:center,center 38%;
@@ -49,10 +49,28 @@
   }
   .inviteScene > * { position:relative; z-index:1; }
   .inviteScene p.sub {
-    font-size:17px; line-height:2.05; max-width:340px; margin-bottom:22px; color:#946067;
-    padding:13px 15px; border-radius:18px;
-    background:linear-gradient(180deg,rgba(255,252,246,.5),rgba(255,243,231,.72));
-    box-shadow:0 8px 24px rgba(90,42,46,.10),0 0 0 1px rgba(255,255,255,.35);
+    position:relative; max-width:360px; margin-bottom:22px; padding:25px 28px 24px;
+    border-radius:24px 9px 24px 9px; border:1px solid rgba(210,157,103,.32);
+    font-family:"STKaiti","KaiTi","Songti SC","Noto Serif SC",serif;
+    font-size:clamp(19px,4.9vw,22px); line-height:1.78; letter-spacing:2px;
+    color:#814b56; font-weight:600; text-shadow:0 1px 0 rgba(255,255,255,.82);
+    background:linear-gradient(155deg,rgba(255,253,247,.58),rgba(255,241,225,.72));
+    box-shadow:0 12px 32px rgba(90,42,46,.13),inset 0 1px 0 rgba(255,255,255,.82);
+  }
+  .inviteScene p.sub::before {
+    content:"“"; position:absolute; left:13px; top:-15px; font-family:Georgia,serif;
+    color:#d29a64; font-size:48px; line-height:1; opacity:.8;
+  }
+  .inviteScene p.sub::after {
+    content:"✦"; position:absolute; right:15px; bottom:8px;
+    color:#d29a64; font-size:11px; letter-spacing:0; opacity:.8;
+  }
+  .inviteScene .invitePoem span { display:block; }
+  .inviteScene .invitePoem span:nth-child(2) {
+    font-size:.9em; letter-spacing:1.3px; color:#9b6268; margin:1px 0;
+  }
+  .inviteScene .invitePoem span:nth-child(3) {
+    color:#7c3f4c; font-weight:700; letter-spacing:2.5px;
   }
   .inviteScene .balloon { font-size:60px; margin-bottom:12px; filter:drop-shadow(0 6px 10px rgba(80,40,42,.22)); }
   .inviteScene .envelope { font-size:64px; margin-bottom:8px; filter:drop-shadow(0 8px 12px rgba(80,40,42,.25)); }
@@ -838,7 +856,11 @@
   <!-- 第1幕 邀请函 -->
   <section class="scene inviteScene" id="s1">
     <span class="balloon">🎈</span>
-    <p class="sub">有一封信,出发于云端<br>它穿过彩虹、风铃和晚风<br>只为在今晚抵达你手里</p>
+    <p class="sub invitePoem">
+      <span>有一封信，出发于云端</span>
+      <span>它穿过彩虹、风铃和晚风</span>
+      <span>只为在今晚抵达你手里</span>
+    </p>
     <span class="envelope">💌</span>
     <button class="btn" onclick="enterSealFromInvite()">打开这封信 ✉️</button>
   </section>
