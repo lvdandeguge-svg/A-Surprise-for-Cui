@@ -35,6 +35,17 @@
   }
   .scene.active { display:flex; animation:fadeIn .9s ease both; }
   @keyframes fadeIn { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
+  .scenePrevBtn, .sg-prev {
+    appearance:none; border:1px solid rgba(173,116,94,.34); border-radius:999px;
+    background:rgba(255,251,244,.84); color:#955f61; padding:8px 13px;
+    font-size:12px; font-weight:700; letter-spacing:1px; cursor:pointer;
+    box-shadow:0 5px 14px rgba(117,70,65,.12); -webkit-tap-highlight-color:transparent;
+  }
+  .scenePrevBtn {
+    position:fixed; left:14px; top:max(14px,env(safe-area-inset-top)); z-index:900;
+  }
+  .scenePrevBtn[hidden] { display:none; }
+  .scenePrevBtn:active, .sg-prev:active { transform:scale(.95); }
   h1 { font-size:27px; letter-spacing:2px; margin-bottom:14px; font-weight:700; color:#8a4a56; }
   h2 { font-size:21px; margin-bottom:12px; font-weight:700; letter-spacing:1px; color:#8a4a56; }
   p.sub { color:#a06a72; font-size:15px; line-height:1.9; margin-bottom:18px; }
@@ -592,7 +603,7 @@
   #s5.player-active .music-wall-notes { display:none; }
   .musicPlayerTop {
     width:100%; display:flex; align-items:center; justify-content:space-between;
-    color:#9d6669; margin-bottom:8px;
+    color:#9d6669; margin-bottom:8px; padding-left:92px;
   }
   .musicPlayerActions { display:flex; align-items:center; gap:9px; }
   .musicBackBtn {
@@ -760,6 +771,7 @@
   color:#a9624f;opacity:.85;font-weight:600;}
 .sg-skip{position:absolute;top:16px;right:18px;font-size:14px;color:#9c5a48;opacity:.85;cursor:pointer;
   padding:10px;-webkit-tap-highlight-color:transparent;}
+.sg-prev{position:absolute;top:16px;left:18px;z-index:9;}
 .sg-env{position:relative;width:min(78vw,330px);aspect-ratio:5/3.6;filter:drop-shadow(0 22px 40px rgba(150,80,60,.32));
   opacity:0;transform:scale(.9);transition:opacity .55s ease,transform .62s cubic-bezier(.2,.8,.25,1);}
 .sg-pouch{position:absolute;inset:0;border-radius:14px;
@@ -816,6 +828,7 @@
 <div id="sealGate">
   <div class="sg-tag">一封加急的信 &#9993;</div>
   <div class="sg-skip" id="sgSkip">跳过 &rsaquo;</div>
+  <button class="sg-prev" id="sgPrev" onclick="returnSealToInvite()">← 上一幕</button>
   <div class="sg-env">
     <div class="sg-letter"><div class="sg-letter-inner">蜡封崩开的瞬间<br>信就归你了</div></div>
     <div class="sg-pouch"></div>
@@ -842,6 +855,7 @@
 <!-- ====== BGM: Dear John (slow ambient instrumental) ====== -->
 <audio id="bgmAudio" loop preload="none"></audio>
 <button id="bgmBtn" aria-label="bgm" style="position:fixed;right:18px;bottom:18px;z-index:9999;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.55);backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(200,110,120,.35);font-size:22px;line-height:48px;text-align:center;padding:0;cursor:pointer;transition:transform .2s,background .3s;-webkit-tap-highlight-color:transparent;">🎵</button>
+<button id="scenePrevBtn" class="scenePrevBtn" onclick="goPreviousScene()" hidden>← 上一幕</button>
 <main>
 
   <!-- 第0幕 问答 -->
@@ -1663,12 +1677,49 @@ const KEY = "birthday-progress-v3";
 function go(i){
   document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+i).classList.add('active');
+  const prev = document.getElementById('scenePrevBtn');
+  if(prev) prev.hidden = i === 1;
   try { localStorage.setItem(KEY, i); } catch(e){}
   if(i===0) renderQuiz();
   if(i===2) initPuzzle();
   if(i===3) initRoom();
   if(i===5) initMusicWall();
   if(i===6) finaleStart();
+}
+function resetPuzzleForPrevious(){
+  puzzleInited = false;
+  puzzleDone = false;
+  tiles = [];
+  const reveal = document.getElementById('reveal');
+  if(reveal) reveal.classList.remove('show');
+  const age = document.getElementById('revealAge');
+  if(age) age.classList.remove('in');
+  const revealBtn = document.getElementById('revealBtn');
+  if(revealBtn){
+    revealBtn.style.opacity = '0';
+    revealBtn.style.pointerEvents = 'none';
+  }
+}
+function goPreviousScene(){
+  const active = document.querySelector('.scene.active');
+  if(!active) return;
+  if(active.id === 's0'){
+    if(typeof window.reopenSealForPrevious === 'function') window.reopenSealForPrevious();
+    return;
+  }
+  if(active.id === 's2'){
+    quizIdx = 0;
+    go(0);
+    return;
+  }
+  if(active.id === 's3'){
+    resetPuzzleForPrevious();
+    go(2);
+    return;
+  }
+  if(active.id === 's4'){ go(3); return; }
+  if(active.id === 's5'){ go(4); return; }
+  if(active.id === 's6'){ go(5); return; }
 }
 function replay(){
   try{
@@ -2894,6 +2945,29 @@ function finaleStart(){
     requestAnimationFrame(function(){ gate.classList.add('open'); });
   }
   window.openSealGate=openSealGate;
+  function resetSealUI(){
+    holding=false;
+    if(raf) cancelAnimationFrame(raf);
+    raf=null;
+    doneLock=false;
+    quizOpened=false;
+    need=DUR;
+    setProg(0);
+    wrap.classList.remove('burst');
+    flap.classList.remove('open');
+    letter.classList.remove('rise');
+    hint.style.opacity='';
+    hint.textContent='按住蜡封，亲手拆开';
+  }
+  window.reopenSealForPrevious=function(){
+    resetSealUI();
+    openSealGate();
+  };
+  window.returnSealToInvite=function(){
+    resetSealUI();
+    hide(true);
+    go(1);
+  };
   function revealQuiz(){
     if(quizOpened) return;
     quizOpened=true;
