@@ -193,7 +193,12 @@
     box-shadow:0 5px 18px rgba(154,92,55,.12);
     opacity:0; animation:fadeIn .7s .72s ease both;
   }
+  .cakeIntroContinue {
+    position:relative; z-index:1; margin-top:-2px;
+    opacity:0; animation:fadeIn .65s .48s ease both;
+  }
   #cakeIntro.slideOut .cakeIntroHint { opacity:0; transition:opacity .2s; }
+  #cakeIntro.slideOut .cakeIntroContinue { opacity:0; transition:opacity .18s; pointer-events:none; }
   @keyframes cakeCardPop {
     0% { opacity:0; transform:translateY(42vh) scale(.28) rotate(-7deg); }
     58% { opacity:1; transform:translateY(-13px) scale(1.035) rotate(1.2deg); }
@@ -667,6 +672,10 @@
 #sealGate{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(120% 90% at 50% 18%, #f7e4d3 0%, #f0cdbb 42%, #e7b39f 100%);
   transition:opacity .7s ease, visibility .7s;overflow:hidden;}
+#sealGate, #sealGate * {
+  user-select:none !important; -webkit-user-select:none !important;
+  -webkit-touch-callout:none !important; -webkit-user-drag:none;
+}
 #sealGate.gone{opacity:0;visibility:hidden;pointer-events:none;}
 .sg-tag{position:absolute;top:22px;left:50%;transform:translateX(-50%);font-size:13px;letter-spacing:2px;
   color:#a9624f;opacity:.85;font-weight:600;}
@@ -690,6 +699,7 @@
 .sg-flap.open{transform:rotateX(172deg);}
 .sg-sealwrap{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);z-index:6;
   width:118px;height:118px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none;}
+#sgSealWrap *{pointer-events:none !important;}
 .sg-ring{position:absolute;inset:0;transform:rotate(-90deg);}
 .sg-ring circle{fill:none;stroke-width:5;stroke-linecap:round;}
 .sg-ring-bg{stroke:rgba(255,255,255,.4);}
@@ -738,7 +748,7 @@
         <circle class="sg-ring-bg" cx="60" cy="60" r="54"/>
         <circle class="sg-ring-fg" id="sgRing" cx="60" cy="60" r="54"/>
       </svg>
-      <div class="sg-seal"><span class="sg-seal-hi"></span><span class="sg-seal-mark">ABC</span></div>
+      <div class="sg-seal"><span class="sg-seal-hi"></span><span class="sg-seal-mark">Hi~</span></div>
     </div>
     <div class="sg-hint" id="sgHint">按住蜡封，亲手拆开</div>
     <div class="sg-sparks" id="sgSparks"></div>
@@ -1317,6 +1327,7 @@
     <div id="cakeIntro" aria-hidden="true">
       <div class="cakeIntroCard"><div class="cakeIntroPreview"></div></div>
       <div class="cakeIntroHint">一张贺卡，正从蛋糕里跳出来…</div>
+      <button class="btn cakeIntroContinue" onclick="finishCakeIntro()">去看看蛋糕 🍰</button>
     </div>
 
     <h2 class="glow" id="cakeHeading" style="margin-top:.6vh">🎂 先许一个愿望</h2>
@@ -1346,7 +1357,7 @@
         <p class="giftPopupText">它，就在你手里。</p>
         <div class="giftWhisper">🤫 先别打开！</div>
         <p class="giftPopupNote">还有一份礼物，在下一页等你…</p>
-        <button class="btn" onclick="beginMusicGift()">去听藏在音乐里的礼物 🎵</button>
+        <button class="btn" onclick="beginMusicGift()">去看看</button>
       </div>
     </div>
   </section>
@@ -1366,7 +1377,7 @@
       <div id="recordGrid" aria-label="16首歌曲列表"></div>
       <div class="musicWallFooter">
         <p>点开唱片，就把这一刻调成属于你的背景音乐。</p>
-        <button class="btn ghost" onclick="leaveMusicForFinale()">去看最后的惊喜 🌈</button>
+        <button class="btn ghost" onclick="leaveMusicForFinale()">去看最后的祝愿</button>
       </div>
     </div>
 
@@ -1402,7 +1413,7 @@
           <span class="musicTime" id="musicDuration">00:00</span>
         </div>
       </div>
-      <button class="btn musicFinaleBtn" onclick="leaveMusicForFinale()">去看最后的惊喜 🌈</button>
+      <button class="btn musicFinaleBtn" onclick="leaveMusicForFinale()">去看最后的祝愿</button>
       <audio id="trackAudio" preload="auto" playsinline></audio>
     </div>
   </section>
@@ -1410,15 +1421,12 @@
   <!-- 第6幕 祝福 -->
   <section class="scene" id="s6">
     <div id="finaleLines">
-      <div class="ln">亲爱的 <span class="nm">ABC</span>:</div>
-      <div class="ln">19岁,是世界刚刚为你翻开的一页。</div>
       <div class="ln">愿你喜欢的歌,永远有下一首;</div>
       <div class="ln">愿你走的路,都有暖光引路;</div>
       <div class="ln">愿快乐像今天的风,不请自来。</div>
       <div class="ln">世界很大,而19岁的你,才刚刚开始发光。</div>
       <div class="ln shimmer">生日快乐,不止今天。🎂</div>
     </div>
-    <div class="sign" id="signLine">—— 永远在乎你的人</div>
     <div class="endmark" id="endMark">· FIN ·</div>
     <div class="foot" id="footBox">
       🌈 这个页面会一直留在这里,随时可以回来看看<br>
@@ -1458,7 +1466,6 @@ const CONFIG = {
 /* =========================================================== */
 
 document.getElementById('nameTag0').textContent = CONFIG.name;
-document.querySelector('#finaleLines .nm').textContent = CONFIG.name;
 document.getElementById('revealDate').textContent = CONFIG.birthdayLunar;
 document.getElementById('revealSub').textContent = "公历 " + CONFIG.birthdaySolar + " · " + CONFIG.lunarYear;
 document.getElementById('revealAge').textContent = CONFIG.age + "岁,你好!";
@@ -1845,7 +1852,7 @@ function buildGarland(){
   g.innerHTML = html;
 }
 
-let cakeIntroStarted = false, cakeIntroTimer = null, cakeIntroImageUrl = "";
+let cakeIntroStarted = false, cakeIntroImageUrl = "";
 function prepareCakeIntroAsset(){
   if(cakeIntroImageUrl) return cakeIntroImageUrl;
   const cake = document.getElementById('cakeSvg');
@@ -1878,7 +1885,6 @@ function startCakeIntro(){
     overlay.setAttribute('aria-hidden','false');
     overlay.classList.add('show');
     revealRealCake();
-    cakeIntroTimer = setTimeout(finishCakeIntro, 2050);
   };
   image.onerror = ()=>finishCakeIntro(true);
   image.src = prepareCakeIntroAsset();
@@ -1929,7 +1935,6 @@ function beginBlowStep(){
 function finishCakeIntro(immediate){
   const overlay = document.getElementById('cakeIntro');
   if(!overlay || overlay.classList.contains('slideOut')) return;
-  if(cakeIntroTimer){ clearTimeout(cakeIntroTimer); cakeIntroTimer = null; }
   revealRealCake();
   whoosh();
   overlay.classList.add('slideOut');
@@ -2535,11 +2540,16 @@ function openMusicTrack(index, sourceButton){
   const sourceVinyl = sourceButton && sourceButton.querySelector('.vinyl');
   const from = sourceVinyl ? sourceVinyl.getBoundingClientRect() : null;
   const flyingRecord = createRecordFly(from,index);
+  const sameTrack = currentTrackIndex === index && !!trackAudio.getAttribute('src');
   currentTrackIndex = index;
   requestAnimationFrame(()=>{
     s5.classList.add('opening','player-active');
     s5.scrollTop = 0;
-    loadMusicTrack(index,true);
+    if(!sameTrack){
+      loadMusicTrack(index,true);
+    }else{
+      setMusicPlaying(!trackAudio.paused);
+    }
     requestAnimationFrame(()=>{
       const target = document.querySelector('.playerVinylWrap').getBoundingClientRect();
       setTimeout(()=>s5.classList.remove('opening'),560);
@@ -2714,7 +2724,6 @@ function finaleStart(){
     }, delay);
     delay += 1500;
   });
-  setTimeout(()=>document.getElementById('signLine').classList.add('in'), delay + 400);
   setTimeout(()=>document.getElementById('endMark').classList.add('in'), delay + 1600);
   setTimeout(()=>document.getElementById('footBox').classList.add('in'), delay + 2600);
 }
@@ -2807,6 +2816,7 @@ function finaleStart(){
   function pressDown(e){
     if(doneLock) return;
     if(e.cancelable) e.preventDefault();
+    try{ window.getSelection().removeAllRanges(); }catch(_e){}
     holding=true; need=DUR; if(raf) cancelAnimationFrame(raf);
     hint.textContent='再按紧一点…';
     var last=performance.now();
@@ -2831,6 +2841,10 @@ function finaleStart(){
     } else { hint.textContent='按住蜡封，亲手拆开'; }
   }
   wrap.addEventListener('pointerdown',pressDown);
+  wrap.addEventListener('touchstart',function(e){ if(e.cancelable) e.preventDefault(); },{passive:false});
+  ['contextmenu','selectstart','dragstart'].forEach(function(ev){
+    wrap.addEventListener(ev,function(e){ e.preventDefault(); e.stopPropagation(); },true);
+  });
   window.addEventListener('pointerup',pressUp);
   window.addEventListener('pointercancel',pressUp);
   skip.addEventListener('click',function(){ if(doneLock) return; doneLock=true; markDone(); hide(false); });
