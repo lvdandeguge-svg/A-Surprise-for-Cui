@@ -38,11 +38,24 @@
   h1 { font-size:27px; letter-spacing:2px; margin-bottom:14px; font-weight:700; color:#8a4a56; }
   h2 { font-size:21px; margin-bottom:12px; font-weight:700; letter-spacing:1px; color:#8a4a56; }
   p.sub { color:#a06a72; font-size:15px; line-height:1.9; margin-bottom:18px; }
+  .inviteScene {
+    background-color:#f6e7dc;
+    background-image:
+      linear-gradient(180deg,rgba(255,248,240,.45) 0%,rgba(255,238,225,.58) 52%,rgba(255,244,232,.78) 100%),
+      url("assets/invite-bg.jpg");
+    background-size:cover,cover;
+    background-position:center,center 38%;
+    background-repeat:no-repeat;
+  }
+  .inviteScene > * { position:relative; z-index:1; }
   .inviteScene p.sub {
     font-size:17px; line-height:2.05; max-width:340px; margin-bottom:22px; color:#946067;
+    padding:13px 15px; border-radius:18px;
+    background:linear-gradient(180deg,rgba(255,252,246,.5),rgba(255,243,231,.72));
+    box-shadow:0 8px 24px rgba(90,42,46,.10),0 0 0 1px rgba(255,255,255,.35);
   }
-  .inviteScene .balloon { font-size:60px; margin-bottom:12px; }
-  .inviteScene .envelope { font-size:64px; margin-bottom:8px; }
+  .inviteScene .balloon { font-size:60px; margin-bottom:12px; filter:drop-shadow(0 6px 10px rgba(80,40,42,.22)); }
+  .inviteScene .envelope { font-size:64px; margin-bottom:8px; filter:drop-shadow(0 8px 12px rgba(80,40,42,.25)); }
   .inviteScene.inviteLeaving { animation:inviteSceneOut .42s ease forwards; pointer-events:none; }
   @keyframes inviteSceneOut {
     from{opacity:1; transform:scale(1);}
