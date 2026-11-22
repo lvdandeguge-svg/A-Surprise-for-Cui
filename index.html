@@ -499,37 +499,60 @@
   #musicWallSub { margin:9px auto 0; color:#a06d6e; font-size:13.5px; line-height:1.75; max-width:340px; }
   /* ---- 旋转唱片选歌 ---- */
   #wheelStage {
-    position:relative; width:min(90vw,360px,74vh); aspect-ratio:1; margin:6px auto 0;
+    position:relative; width:min(88vw,340px,56vh); aspect-ratio:1; margin:12px auto 2px;
     touch-action:none; -webkit-user-select:none; user-select:none; outline:none; cursor:grab;
   }
   #wheelStage:active { cursor:grabbing; }
-  #wheelStage:focus-visible { outline:2px dashed rgba(214,160,84,.85); outline-offset:12px; border-radius:50%; }
+  #wheelStage:focus-visible { outline:2px dashed rgba(214,160,84,.8); outline-offset:14px; border-radius:50%; }
+  #wheelStage::before {
+    content:""; position:absolute; inset:-9px; border-radius:50%; pointer-events:none;
+    border:1px dashed rgba(198,148,90,.36);
+  }
+  .wheelPointer {
+    position:absolute; left:50%; top:-17px; transform:translateX(-50%); z-index:6; pointer-events:none;
+    width:0; height:0; border-left:7px solid transparent; border-right:7px solid transparent;
+    border-top:11px solid #d8a457; filter:drop-shadow(0 3px 4px rgba(160,105,80,.32));
+  }
   #recordWheel {
     position:absolute; inset:0; border-radius:50%;
     transform:rotate(calc(var(--rot,0) * 1deg));
     background:
-      repeating-radial-gradient(circle at 50% 50%, rgba(30,23,28,.96) 0 1.5px, rgba(86,65,72,.46) 2.1px 4.2px),
-      radial-gradient(circle at 38% 28%, #5a4750 0%, #2b222a 68%);
-    box-shadow:0 18px 40px rgba(122,68,68,.3), inset 0 0 0 2px rgba(255,255,255,.16), inset 0 0 0 10px rgba(255,255,255,.045);
+      repeating-radial-gradient(circle at 50% 50%, rgba(203,148,96,.085) 0 1px, rgba(203,148,96,0) 1px 6px),
+      radial-gradient(circle at 46% 32%, #fffefb 0%, #fff7ec 32%, #fbeade 60%, #f5ddcd 84%, #efd0c1 100%);
+    box-shadow:
+      0 18px 36px rgba(150,88,84,.2),
+      inset 0 0 0 1px rgba(206,155,96,.5),
+      inset 0 0 0 9px rgba(255,255,255,.5),
+      inset 0 0 0 10px rgba(206,155,96,.15);
     will-change:transform;
   }
   #recordWheel::after {
     content:""; position:absolute; inset:0; border-radius:50%; pointer-events:none;
-    background:radial-gradient(circle at 32% 24%, rgba(255,255,255,.2), rgba(255,255,255,0) 44%);
+    background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.45), rgba(255,255,255,0) 42%);
   }
   .wheelItem {
     appearance:none; border:0; padding:0; background:transparent; cursor:pointer;
     position:absolute; left:50%; top:50%; z-index:1;
-    width:var(--item,46px); height:var(--item,46px);
-    margin:calc(var(--item,46px) * -0.5) 0 0 calc(var(--item,46px) * -0.5);
+    width:var(--item,47px); height:var(--item,47px);
+    margin:calc(var(--item,47px) * -0.5) 0 0 calc(var(--item,47px) * -0.5);
     transform:rotate(calc(var(--a,0) * 1deg)) translateY(calc(var(--ring,130px) * -1));
     -webkit-tap-highlight-color:transparent;
   }
   .wheelItemInner {
-    position:absolute; inset:0; border-radius:50%; overflow:hidden; background:#f6e9d7;
+    position:absolute; inset:0; border-radius:50%; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--c1,#f3ddc6);
     transform:rotate(calc((var(--a,0) * -1 - var(--rot,0)) * 1deg));
-    box-shadow:0 4px 10px rgba(38,20,24,.42), 0 0 0 2px rgba(255,250,235,.86);
-    transition:scale .26s cubic-bezier(.2,.8,.3,1), box-shadow .26s ease;
+    box-shadow:0 5px 12px rgba(120,66,70,.26), 0 0 0 2.5px #fffdf7, 0 0 0 3.6px rgba(206,155,96,.38);
+    transition:scale .28s cubic-bezier(.2,.8,.3,1), box-shadow .28s ease;
+  }
+  .wheelItem.is-active { z-index:3; }
+  .wheelItem.is-active .wheelItemInner {
+    scale:1.26;
+    box-shadow:0 10px 20px rgba(150,80,80,.3), 0 0 0 3px #fffdf7, 0 0 0 5px rgba(214,160,84,.92), 0 0 20px rgba(255,178,116,.5);
+  }
+  .wheelItem.is-playing .wheelItemInner {
+    box-shadow:0 6px 16px rgba(150,80,80,.3), 0 0 0 3px #ffffff, 0 0 20px rgba(255,138,132,.78);
   }
   .recordCoverThumb {
     position:absolute; z-index:2; inset:21%; border-radius:50%; overflow:hidden;
@@ -539,54 +562,42 @@
   .recordCoverThumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .recordCoverThumb .coverNote { color:#fffdf8; font-size:clamp(15px,3.5vw,23px); font-weight:800; }
   .wheelItem .recordCoverThumb { position:absolute; inset:0; border-radius:50%; box-shadow:none; }
-  .wheelItem .recordCoverThumb .coverNote { font-size:16px; }
-  .wheelItem.is-active { z-index:3; }
-  .wheelItem.is-active .wheelItemInner {
-    scale:1.22;
-    box-shadow:0 8px 18px rgba(90,40,45,.5), 0 0 0 3px rgba(255,226,158,.96), 0 0 24px rgba(255,178,116,.62);
-  }
-  .wheelItem.is-playing .wheelItemInner {
-    box-shadow:0 4px 14px rgba(90,40,45,.5), 0 0 0 3px rgba(255,255,255,.95), 0 0 22px rgba(255,144,140,.9);
-  }
+  .wheelItem .recordCoverThumb .coverNote { font-size:15px; color:#fdf6ea; }
   .wheelHub {
     position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-    width:47%; aspect-ratio:1; border-radius:50%; z-index:4;
+    width:39%; aspect-ratio:1; border-radius:50%; z-index:4;
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
-    padding:12px 10px 10px; text-align:center;
-    background:radial-gradient(circle at 42% 30%, #fffdf4 0%, #fff3e0 54%, #f3dcc1 100%);
-    box-shadow:0 8px 22px rgba(120,66,68,.28), inset 0 0 0 1px rgba(212,162,95,.55), inset 0 0 0 7px rgba(255,255,255,.5);
+    padding:10px 9px 8px; text-align:center;
+    background:radial-gradient(circle at 44% 30%, #fffefc 0%, #fff6ea 58%, #f7e2cd 100%);
+    box-shadow:0 10px 22px rgba(150,88,84,.2), inset 0 0 0 1px rgba(206,155,96,.48), inset 0 0 0 6px rgba(255,255,255,.62);
   }
-  .wheelHub::after {
-    content:""; position:absolute; inset:-13px; border-radius:50%;
-    border:1px dashed rgba(198,148,90,.34); pointer-events:none;
-  }
-  .wheelHubCount { font-size:9.5px; letter-spacing:2px; color:#bd8a5c; font-weight:700; }
+  .wheelHubCount { font-size:9px; letter-spacing:2.2px; color:#c08f5f; font-weight:700; }
   .wheelHubTitle {
-    max-width:100%; font-size:clamp(11.5px,2.9vw,13.5px); line-height:1.34; color:#7d4148; font-weight:800;
+    max-width:100%; font-size:clamp(11px,2.8vw,12.5px); line-height:1.3; color:#7d4148; font-weight:800;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere;
   }
   .wheelHubArtist {
-    max-width:100%; font-size:10px; color:#a97b76; line-height:1.3;
+    max-width:100%; font-size:9.5px; color:#ab7d78; line-height:1.3;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .wheelHubPlay {
-    appearance:none; border:0; margin-top:5px; width:min(40px,11.5vw); height:min(40px,11.5vw);
-    border-radius:50%; cursor:pointer; color:#fff; font-size:15px; line-height:1;
-    background:linear-gradient(135deg,#ff927e,#ffb769 55%,#ff7fa2);
-    box-shadow:0 6px 15px rgba(226,120,105,.4);
+    appearance:none; border:0; margin-top:6px; width:min(34px,10vw); height:min(34px,10vw);
+    border-radius:50%; cursor:pointer; color:#fff; font-size:12px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(140deg,#ff9d86,#ffb86a 58%,#ff88a6);
+    box-shadow:0 6px 14px rgba(226,120,105,.36), 0 0 0 2px rgba(255,255,255,.85);
     transition:transform .16s ease;
   }
   .wheelHubPlay:active { transform:scale(.93); }
-  .wheelNav {
-    width:min(94vw,420px); margin:10px auto 2px; display:flex; align-items:center; justify-content:center; gap:14px;
-  }
+  .wheelNav { width:min(94vw,400px); margin:12px auto 2px; display:flex; align-items:center; justify-content:center; gap:11px; }
   .wheelNavBtn {
-    appearance:none; border:1px solid rgba(180,123,104,.32); border-radius:50%;
-    width:34px; height:34px; background:rgba(255,255,255,.6); color:#96565e;
-    font-size:17px; line-height:1; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    appearance:none; border:1px solid rgba(198,148,90,.42); border-radius:50%;
+    width:32px; height:32px; background:rgba(255,253,247,.8); color:#a8626a;
+    font-size:16px; line-height:1; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    box-shadow:0 3px 8px rgba(150,88,84,.14);
   }
   .wheelNavBtn:active { transform:scale(.94); }
-  .wheelNavHint { color:#a57472; font-size:11.5px; letter-spacing:.5px; }
+  .wheelNavHint { color:#a57472; font-size:11px; letter-spacing:.4px; white-space:nowrap; }
   .recordFly {
     position:fixed; z-index:700; border-radius:50%; pointer-events:none;
     display:flex; align-items:center; justify-content:center;
@@ -715,7 +726,7 @@
   @keyframes musicFinaleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
   .musicError { color:#aa666d; font-size:14px; line-height:1.8; padding:30px 12px; }
   @media (max-width:560px){
-    #wheelStage { width:min(92vw,340px,70vh); }
+    #wheelStage { width:min(90vw,318px,52vh); }
     .wheelNavHint { font-size:11px; }
     .musicWallFooter p { max-width:280px; }
   }
@@ -1497,6 +1508,7 @@
         <button class="musicRestartBtn" onclick="restartExperience()">↺ 从头开始</button>
       </header>
       <div id="wheelStage" tabindex="0" role="group" aria-label="旋转唱片选歌：拖动圆盘旋转，点封面直接播放">
+        <div class="wheelPointer" aria-hidden="true"></div>
         <div id="recordWheel"></div>
         <div class="wheelHub">
           <div class="wheelHubCount" id="wheelCount">01 / 16</div>
@@ -2402,22 +2414,36 @@ function formatMusicTime(seconds){
   return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
 }
 
+function coverThumbSrc(track){
+  const cover = track && track.cover;
+  if(!cover) return "";
+  if(track.thumb) return track.thumb;
+  return cover.indexOf("/covers/") !== -1 ? cover.replace("/covers/", "/covers/thumbs/") : cover;
+}
+
 function createRecordCover(track){
   const thumb = document.createElement('span');
   thumb.className = "recordCoverThumb";
-  if(track && track.cover){
+  const smallSrc = coverThumbSrc(track);
+  if(smallSrc){
     const img = new Image();
     img.alt = "";
     img.decoding = "async";
     img.loading = "eager";
-    img.src = track.cover;
+    img.src = smallSrc;
+    let fellBack = false;
     img.addEventListener('error',()=>{
+      if(!fellBack && track && track.cover && smallSrc !== track.cover){
+        fellBack = true;
+        img.src = track.cover;
+        return;
+      }
       img.remove();
       const note = document.createElement('span');
       note.className = "coverNote";
       note.textContent = "♪";
       thumb.appendChild(note);
-    },{once:true});
+    });
     thumb.appendChild(img);
   }else{
     const note = document.createElement('span');
@@ -2554,8 +2580,8 @@ function layoutWheel(){
   if(!stage || !disc) return;
   const width = stage.clientWidth || Math.min(window.innerWidth * .9, 360);
   if(!width) return;
-  const item = Math.max(36, Math.min(50, width * .132));
-  const ring = width / 2 - item / 2 - 8;
+  const item = Math.max(34, Math.min(52, width * .14));
+  const ring = width / 2 - item / 2 - 7;
   [stage, disc].forEach(el=>{
     el.style.setProperty('--item', item.toFixed(1) + 'px');
     el.style.setProperty('--ring', ring.toFixed(1) + 'px');
@@ -2564,6 +2590,8 @@ function layoutWheel(){
 
 function playWheelIndex(index, source){
   if(!wheelTracks()[index]) return;
+  const hubPlay = document.getElementById('wheelHubPlay');
+  if(hubPlay) hubPlay.textContent = "…";
   rotateWheelTo(index, true);
   openMusicTrack(index, source || document.querySelector('.wheelItem[data-track-index="' + index + '"]'));
 }
@@ -2701,6 +2729,9 @@ function initMusicWall(){
   layoutWheel();
   applyWheelRot(0);
   bindWheelStage();
+  const warmFirst = function(){ prefetchNextTrack(-1); };
+  if('requestIdleCallback' in window) requestIdleCallback(warmFirst, {timeout:2000});
+  else setTimeout(warmFirst, 900);
   const hubPlay = document.getElementById('wheelHubPlay');
   if(hubPlay) hubPlay.addEventListener('click', function(){ playWheelIndex(wheelIndex < 0 ? 0 : wheelIndex, null); });
   if(!window.wheelResizeBound){
@@ -2913,14 +2944,11 @@ function openMusicTrack(index, sourceButton){
   const flyingRecord = createRecordFly(from,index);
   const sameTrack = currentTrackIndex === index && !!trackAudio.getAttribute('src');
   currentTrackIndex = index;
+  if(!sameTrack) loadMusicTrack(index,true);
   requestAnimationFrame(()=>{
     s5.classList.add('opening','player-active');
     s5.scrollTop = 0;
-    if(!sameTrack){
-      loadMusicTrack(index,true);
-    }else{
-      setMusicPlaying(!trackAudio.paused);
-    }
+    if(sameTrack) setMusicPlaying(!trackAudio.paused);
     requestAnimationFrame(()=>{
       const target = document.querySelector('.playerVinylWrap').getBoundingClientRect();
       setTimeout(()=>s5.classList.remove('opening'),560);
@@ -2971,6 +2999,8 @@ function setMusicPlaying(playing){
   if(btn) btn.textContent = playing ? "❚❚" : "▶";
   const bgmBtn = document.getElementById('bgmBtn');
   if(bgmBtn && window.musicGiftActive) bgmBtn.textContent = playing ? "🎵" : "🔇";
+  const hubPlay = document.getElementById('wheelHubPlay');
+  if(hubPlay) hubPlay.textContent = playing ? "❚❚" : "▶";
   markCurrentRecord();
   if(playing && currentTrackIndex >= 0) setTimeout(()=>prefetchNextTrack(currentTrackIndex), 4000);
 }
