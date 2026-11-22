@@ -380,91 +380,69 @@
     18%{opacity:1; transform:translateX(-50%) translateY(0) scale(1)}
     75%{opacity:1} 100%{opacity:0; transform:translateX(-50%) translateY(-20px) scale(1)} }
 
-  /* ---------- 谜语 / 猜礼物 ---------- */
-  .wave { display:flex; gap:5px; align-items:flex-end; height:52px; margin:14px auto; justify-content:center; }
-  .wave span { width:5px; border-radius:3px; background:linear-gradient(180deg,#ff8fa8,#ffc46b); animation:wv 1s ease-in-out infinite; }
-  @keyframes wv { 0%,100%{height:8px; opacity:.5} 50%{height:44px; opacity:1} }
-  .riddle { font-size:16.5px; line-height:2.1; color:#8a4a56; max-width:330px; margin:0 auto; font-weight:500; }
-  #giftInput {
-    width:min(80vw,320px); padding:13px 18px; border-radius:999px; font-size:16px; text-align:center;
-    border:1.5px solid rgba(255,150,160,.55); background:rgba(255,255,255,.75); color:#8a4a56; outline:none;
+  /* ---------- 第4幕 唱片封套 ---------- */
+  #s4 .sleeve {
+    position:relative; width:min(64vw,236px); aspect-ratio:1 / 1; margin:2.6vh auto 0;
+    cursor:pointer; outline:none; transition:transform .4s cubic-bezier(.2,.8,.3,1);
   }
-  #giftInput::placeholder { color:rgba(180,120,130,.5); }
-  #giftHints { margin-top:14px; font-size:14px; color:#d4687a; line-height:2; min-height:28px; }
-  #giftReveal {
-    position:fixed; inset:0; z-index:320; display:none; align-items:center; justify-content:center;
-    padding:24px; background:
-      radial-gradient(circle at 50% 42%,rgba(255,252,241,.88),rgba(255,226,212,.8) 44%,rgba(242,184,196,.72));
-    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  #s4 .sleeve:active { transform:scale(.975); }
+  #s4 .sleeve:focus-visible { outline:2px dashed rgba(216,166,84,.85); outline-offset:7px; border-radius:18px; }
+  #s4 .sleeve.is-open { cursor:default; }
+  .sleeveDisc {
+    position:absolute; inset:0; border-radius:50%;
+    background:
+      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.05) 0 1px, rgba(0,0,0,0) 1px 4px),
+      radial-gradient(circle at 50% 50%, #f7e9cb 0 15.5%, #c8a05f 15.5% 17%, #2a2321 17% 100%);
+    box-shadow:0 12px 26px rgba(80,45,38,.32), inset 0 0 0 2px rgba(255,255,255,.05);
+    display:flex; align-items:center; justify-content:center;
   }
-  #giftReveal.show { display:flex; animation:giftBackdropIn .48s ease both; }
-  .giftPopup {
-    position:relative; width:min(88vw,360px); padding:38px 25px 28px;
-    border-radius:28px; border:1px solid rgba(216,166,84,.72);
-    background:linear-gradient(160deg,rgba(255,255,252,.98),rgba(255,246,233,.98));
-    box-shadow:0 28px 80px rgba(142,72,73,.3),0 0 0 7px rgba(255,255,255,.4),
-               0 0 46px rgba(255,207,128,.34);
-    text-align:center; overflow:hidden;
-    animation:giftPopupIn .82s cubic-bezier(.18,1.25,.3,1) both;
+  .sleeveDisc i {
+    font-style:normal; font-weight:800; font-size:14px; color:#8a5a3a; letter-spacing:1px;
+    opacity:0; transition:opacity .6s ease .55s;
   }
-  .giftPopup::before {
-    content:""; position:absolute; inset:10px; border-radius:21px;
-    border:1px solid rgba(207,155,73,.34); pointer-events:none;
+  #s4 .sleeve.is-open .sleeveDisc i { opacity:1; }
+  @keyframes sleeveSpin { to { transform:rotate(360deg); } }
+  #s4 .sleeve.is-open .sleeveDisc { animation:sleeveSpin 7s linear infinite; }
+  @media (prefers-reduced-motion: reduce){ #s4 .sleeve.is-open .sleeveDisc { animation:none; } }
+  .sleeveCover {
+    position:absolute; inset:0; border-radius:16px; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    background:linear-gradient(158deg,#fffdf6 0%,#fff4e0 48%,#ffe6cd 100%);
+    border:1px solid rgba(216,166,84,.66);
+    box-shadow:0 18px 40px rgba(170,100,80,.24), inset 0 1px 0 rgba(255,255,255,.92);
+    transform-origin:left center; backface-visibility:hidden;
+    transition:transform .95s cubic-bezier(.3,1.05,.4,1), opacity .8s ease .1s;
   }
-  .giftPopup::after {
-    content:""; position:absolute; width:190px; height:190px; border-radius:50%;
-    top:-120px; left:50%; transform:translateX(-50%);
-    background:radial-gradient(circle,rgba(255,219,150,.65),rgba(255,219,150,0) 70%);
-    pointer-events:none;
+  .sleeveCover::after {
+    content:""; position:absolute; inset:9px; border-radius:11px;
+    border:1px solid rgba(207,155,73,.36); pointer-events:none;
   }
-  .giftPopupIcon {
-    position:relative; z-index:1; width:72px; height:72px; margin:-3px auto 12px;
-    display:flex; align-items:center; justify-content:center; font-size:40px;
-    border-radius:50%; background:linear-gradient(145deg,#fff8e8,#ffe3bf);
-    border:1px solid rgba(208,154,70,.55);
-    box-shadow:0 10px 24px rgba(170,99,68,.18),inset 0 2px 5px rgba(255,255,255,.9);
-    animation:giftIconFloat 2.4s ease-in-out infinite;
+  #s4 .sleeve.is-open .sleeveCover { transform:perspective(900px) rotateY(-96deg) translateX(-3%); opacity:0; }
+  .sleeveEyebrow { font-size:10px; letter-spacing:4px; color:#c08b4e; font-weight:700; }
+  .sleeveBig {
+    font-size:42px; font-weight:800; line-height:1.05; letter-spacing:1px;
+    background:linear-gradient(160deg,#ff8fa8,#ffb36b);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .giftPopupEyebrow {
-    position:relative; z-index:1; color:#b17b3e; font-size:12px; letter-spacing:3px;
-    font-weight:700; margin-bottom:10px;
+  .sleeveSub { font-size:11.5px; color:#a06a72; letter-spacing:1.2px; }
+  .sleeveTap {
+    position:absolute; left:50%; bottom:-24px; transform:translateX(-50%);
+    font-size:11.5px; letter-spacing:2px; color:#b0787e; white-space:nowrap;
+    animation:hintBob 1.9s ease-in-out infinite; transition:opacity .5s ease;
   }
-  .giftPopup h3 {
-    position:relative; z-index:1; color:#8d4652; font-size:27px; line-height:1.35;
-    letter-spacing:2px; margin:0 0 8px; text-shadow:0 2px 0 rgba(255,255,255,.8);
+  #s4 .sleeve.is-open .sleeveTap { opacity:0; animation:none; }
+  #letterLines { margin-top:calc(2.6vh + 34px); max-width:330px; }
+  .letterLine {
+    margin:0 0 9px; font-size:15px; line-height:1.95; color:#8a4a56; font-weight:500;
+    opacity:0; transform:translateY(9px);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.3,1);
   }
-  .giftPopupText {
-    position:relative; z-index:1; color:#955e62; font-size:16px; line-height:1.8;
-  }
-  .giftWhisper {
-    position:relative; z-index:1; margin:20px 0 12px; padding:13px 16px;
-    border-radius:16px; color:#8e3f4b; font-size:18px; font-weight:800; letter-spacing:2px;
-    background:linear-gradient(135deg,rgba(255,235,184,.92),rgba(255,208,171,.88));
-    border:1px solid rgba(218,151,82,.52);
-    box-shadow:0 7px 18px rgba(185,112,73,.16),inset 0 1px 0 rgba(255,255,255,.84);
-    animation:giftWhisperPulse 1.8s ease-in-out infinite;
-  }
-  .giftPopupNote {
-    position:relative; z-index:1; color:#aa7276; font-size:13.5px; line-height:1.8;
-  }
-  .giftPopup .btn { position:relative; z-index:1; margin-top:20px; }
-  @keyframes giftBackdropIn { from{opacity:0} to{opacity:1} }
-  @keyframes giftPopupIn {
-    0%{opacity:0; transform:translateY(32px) scale(.82);}
-    65%{opacity:1; transform:translateY(-5px) scale(1.025);}
-    100%{opacity:1; transform:none;}
-  }
-  @keyframes giftIconFloat {
-    0%,100%{transform:translateY(0) rotate(-3deg)}
-    50%{transform:translateY(-6px) rotate(3deg)}
-  }
-  @keyframes giftWhisperPulse {
-    0%,100%{box-shadow:0 7px 18px rgba(185,112,73,.16),inset 0 1px 0 rgba(255,255,255,.84)}
-    50%{box-shadow:0 9px 26px rgba(216,139,82,.3),0 0 22px rgba(255,208,111,.34),inset 0 1px 0 rgba(255,255,255,.9)}
-  }
-  @media (prefers-reduced-motion: reduce){
-    .giftPopup,.giftPopupIcon,.giftWhisper { animation:none; }
-  }
+  #s4.opened .letterLine { opacity:1; transform:none; }
+  #s4.opened .letterLine:nth-of-type(1) { transition-delay:.45s; }
+  #s4.opened .letterLine:nth-of-type(2) { transition-delay:1.05s; }
+  #s4.opened .letterLine:nth-of-type(3) { transition-delay:1.65s; }
+  .letterBtn { margin-top:14px; opacity:0; pointer-events:none; transition:opacity .8s ease, transform .2s, box-shadow .2s; }
+  #s4.opened .letterBtn { opacity:1; pointer-events:auto; transition-delay:2.35s; }
 
   /* ---------- 音乐礼物过渡 ---------- */
   #musicJourney {
@@ -1436,27 +1414,27 @@
     <div id="cakeBtnBox"></div>
   </section>
 
-  <!-- 第4幕 谜语 + 猜礼物 -->
+  <!-- 第4幕 没有盒子的礼物:一张唱片封套 -->
   <section class="scene" id="s4">
-    <h2 class="glow">19岁的第一份礼物</h2>
-    <div class="wave" id="waveBox"></div>
-    <p class="riddle">"我没有嘴,却能唱遍整片天空;<br>我只有手掌大,<br>却装得下你所有的单曲循环。<br>——我是什么?"</p>
-    <div id="giftAsk" style="margin-top:18px">
-      <input id="giftInput" placeholder="写下你的答案…" autocomplete="off">
-      <br><button class="btn" id="giftBtn" onclick="checkGift()">就是它!</button>
-      <div id="giftHints"></div>
-    </div>
-    <div id="giftReveal" role="dialog" aria-modal="true" aria-labelledby="giftRevealTitle">
-      <div class="giftPopup">
-        <div class="giftPopupIcon">🎁</div>
-        <div class="giftPopupEyebrow">第一份礼物的线索</div>
-        <h3 id="giftRevealTitle">低头看看——</h3>
-        <p class="giftPopupText">它，就在你手里。</p>
-        <div class="giftWhisper">🤫 先别打开！</div>
-        <p class="giftPopupNote">还有一份礼物，在下一页等你…</p>
-        <button class="btn" onclick="beginMusicGift()">去看看</button>
+    <h2 class="glow">一份没有盒子的礼物</h2>
+    <div class="sleeve" id="sleeveBox" role="button" tabindex="0"
+         onclick="openSleeve()"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSleeve();}"
+         aria-label="点开封套，看看里面是什么">
+      <div class="sleeveDisc"><i>16</i></div>
+      <div class="sleeveCover">
+        <span class="sleeveEyebrow">FOR YOU</span>
+        <span class="sleeveBig">16</span>
+        <span class="sleeveSub">首歌 · 可以重播的那一种</span>
       </div>
+      <div class="sleeveTap" id="sleeveTap">点一下封套</div>
     </div>
+    <div id="letterLines">
+      <p class="letterLine">本来想送你一件能拿在手里的东西，</p>
+      <p class="letterLine">可东西会旧、会丢，也会被收进抽屉。</p>
+      <p class="letterLine">所以换成 16 首歌：想听的时候点开，它就在。</p>
+    </div>
+    <button class="btn letterBtn" id="letterBtn" onclick="openMusicWall()">去听这 16 首 🎧</button>
   </section>
 
   <!-- 第5幕 16首歌唱片墙 -->
@@ -1535,8 +1513,8 @@
 
   <div id="musicJourney" aria-hidden="true">
     <div class="musicJourneyText">
-      答对了！还有一份礼物，藏在音乐里 🎵
-      <small>十六首歌，等你慢慢点开</small>
+      十六首歌，都在这一页了 🎵
+      <small>随便点一首，今晚的背景音交给它们</small>
     </div>
   </div>
 
@@ -1555,7 +1533,7 @@
 <script>
 /* ================== CONFIG:部署前只改这里 ================== */
 const CONFIG = {
-  name: "ABC",                      // 她的名字/昵称
+  name: "",                         // 她的名字/昵称(留空则拼图上只印 HAPPY BIRTHDAY)
   birthdayLunar: "农历 十月十八",     // 生日(农历,拼图揭晓时的大字)
   birthdaySolar: "2026.11.26",      // 农历十月十八对应的公历日子
   lunarYear: "丙午马年",             // 农历干支年
@@ -1819,7 +1797,7 @@ function makePuzzleImage(){
   x.fillText("✦ ˚ ⋆ ｡˚ ✧ ˚ ⋆ ｡˚ ✦", 300, 470);
   x.shadowBlur = 0;
   x.font = "600 26px 'PingFang SC',sans-serif"; x.fillStyle = "#9a5a66";
-  x.fillText("HAPPY BIRTHDAY · " + CONFIG.name, 300, 520);
+  x.fillText("HAPPY BIRTHDAY" + (CONFIG.name ? " · " + CONFIG.name : ""), 300, 520);
   return c.toDataURL();
 }
 function initPuzzle(){
@@ -2287,7 +2265,7 @@ function showContinueBtn(){
   if(box.childElementCount) return;
   const b = document.createElement('button');
   b.className = 'btn';
-  b.textContent = '收下这块蛋糕，继续下一份礼物 🎁';
+  b.textContent = '收下这块蛋糕，去看没有盒子的那一份 🎵';
   b.onclick = ()=>go(4);
   box.appendChild(b);
 }
@@ -2327,43 +2305,19 @@ function sawSnd(){
 }
 function sparkleSnd(){ [1318.51,1760,2093,2637].forEach((f,i)=>tone(f, i*.06, .5, .05, 'triangle')); }
 
-/* ---------- 声波条 ---------- */
-(function(){
-  const w = document.getElementById('waveBox');
-  for(let i=0;i<16;i++){
-    const s = document.createElement('span');
-    s.style.animationDelay = (i*.09)+"s";
-    s.style.height = (8+Math.random()*28)+"px";
-    w.appendChild(s);
-  }
-})();
-
-/* ---------- 第4幕 猜礼物:先答对,再揭示 ---------- */
-const GIFT_KEYS = ["音响","音箱","喇叭","蓝牙","speaker","bluetooth","低音炮"];
-const GIFT_HINTS = [
-  "提示 ①:它需要充电 🔋",
-  "提示 ②:它连上手机之后,会唱歌 🎵",
-  "提示 ③:两个字,第一个字是「音」😉"
-];
-let giftTries = 0;
-function checkGift(){
-  const v = (document.getElementById('giftInput').value||"").trim().toLowerCase();
-  const fb = document.getElementById('giftHints');
-  if(!v){ fb.textContent = "先写下你的答案呀~"; return; }
-  if(GIFT_KEYS.some(k=>v.includes(k))){
-    fb.textContent = "";
-    ding(); setTimeout(chime, 350);
-    document.getElementById('giftAsk').style.display = "none";
-    document.getElementById('giftReveal').classList.add('show');
-  } else {
-    fb.textContent = GIFT_HINTS[Math.min(giftTries, GIFT_HINTS.length-1)];
-    giftTries++;
-    const inp = document.getElementById('giftInput');
-    inp.style.animation = "none"; void inp.offsetWidth;
-    inp.style.animation = "shake .45s ease";
-  }
+/* ---------- 第4幕 没有盒子的礼物:拆封套 ---------- */
+let sleeveOpened = false;
+function openSleeve(){
+  if(sleeveOpened) return;
+  sleeveOpened = true;
+  const box = document.getElementById('sleeveBox');
+  const s4 = document.getElementById('s4');
+  if(box) box.classList.add('is-open');
+  if(s4) s4.classList.add('opened');
+  try{ ding(); }catch(e){}
+  setTimeout(()=>{ try{ chime(); }catch(e){} }, 260);
+  setTimeout(()=>{ try{ sparkleSnd(); }catch(e){} }, 1000);
 }
-document.getElementById('giftInput').addEventListener('keydown', e=>{ if(e.key==='Enter') checkGift(); });
 
 /* ---------- 第5幕 16首歌唱片墙与点播器 ---------- */
 const MUSIC_COLORS = [
@@ -2413,16 +2367,14 @@ function createRecordCover(track){
   return thumb;
 }
 
-function beginMusicGift(){
+function openMusicWall(){
   const overlay = document.getElementById('musicJourney');
-  const gift = document.getElementById('giftReveal');
   if(!overlay || overlay.classList.contains('show')) return;
   const bgm = document.getElementById('bgmAudio');
   if(bgm) bgm.pause();
   const bgmBtn = document.getElementById('bgmBtn');
   if(bgmBtn) bgmBtn.textContent = "🔇";
   window.musicGiftActive = true;
-  if(gift){ gift.style.transition = "opacity .35s ease,transform .35s ease"; gift.style.opacity = "0"; gift.style.transform = "scale(.96)"; }
   overlay.setAttribute('aria-hidden','false');
   overlay.classList.remove('hide');
   overlay.classList.add('show');
@@ -2433,7 +2385,6 @@ function beginMusicGift(){
     setTimeout(()=>{
       overlay.classList.remove('show','hide');
       overlay.setAttribute('aria-hidden','true');
-      if(gift){ gift.style.opacity = ""; gift.style.transform = ""; }
     }, 650);
   }, 2000);
 }
