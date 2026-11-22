@@ -497,28 +497,39 @@
     text-shadow:0 2px 0 rgba(255,255,255,.8),0 0 24px rgba(255,180,142,.4);
   }
   #musicWallSub { margin:9px auto 0; color:#a06d6e; font-size:13.5px; line-height:1.75; max-width:340px; }
-  #recordGrid {
-    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px 15px;
-    width:100%; margin:0 auto; padding:8px 8px 24px;
+  /* ---- 旋转唱片选歌 ---- */
+  #wheelStage {
+    position:relative; width:min(90vw,360px,74vh); aspect-ratio:1; margin:6px auto 0;
+    touch-action:none; -webkit-user-select:none; user-select:none; outline:none; cursor:grab;
   }
-  .recordCard {
-    appearance:none; border:0; background:transparent; padding:0; cursor:pointer;
-    display:flex; flex-direction:column; align-items:center; gap:9px; color:#8a4a56;
-    -webkit-tap-highlight-color:transparent; user-select:none;
-  }
-  .recordCard .vinyl {
-    position:relative; width:clamp(58px,12.5vw,86px); aspect-ratio:1; border-radius:50%;
+  #wheelStage:active { cursor:grabbing; }
+  #wheelStage:focus-visible { outline:2px dashed rgba(214,160,84,.85); outline-offset:12px; border-radius:50%; }
+  #recordWheel {
+    position:absolute; inset:0; border-radius:50%;
+    transform:rotate(calc(var(--rot,0) * 1deg));
     background:
-      radial-gradient(circle at 34% 27%,rgba(255,255,255,.75) 0 4%,transparent 14%),
-      repeating-radial-gradient(circle,rgba(42,30,35,.72) 0 1px,rgba(92,70,77,.34) 1.5px 3px),
-      conic-gradient(from 30deg,var(--c1),var(--c2),#4d4350,var(--c1));
-    border:3px solid rgba(255,255,255,.72);
-    box-shadow:0 10px 22px rgba(132,75,77,.22),inset 0 0 0 8px rgba(43,33,39,.2);
-    transition:transform .22s ease,box-shadow .22s ease;
+      repeating-radial-gradient(circle at 50% 50%, rgba(30,23,28,.96) 0 1.5px, rgba(86,65,72,.46) 2.1px 4.2px),
+      radial-gradient(circle at 38% 28%, #5a4750 0%, #2b222a 68%);
+    box-shadow:0 18px 40px rgba(122,68,68,.3), inset 0 0 0 2px rgba(255,255,255,.16), inset 0 0 0 10px rgba(255,255,255,.045);
+    will-change:transform;
   }
-  .recordCard .vinyl::after {
-    content:""; position:absolute; inset:11%; border-radius:50%;
-    background:#40363f; box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);
+  #recordWheel::after {
+    content:""; position:absolute; inset:0; border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle at 32% 24%, rgba(255,255,255,.2), rgba(255,255,255,0) 44%);
+  }
+  .wheelItem {
+    appearance:none; border:0; padding:0; background:transparent; cursor:pointer;
+    position:absolute; left:50%; top:50%; z-index:1;
+    width:var(--item,46px); height:var(--item,46px);
+    margin:calc(var(--item,46px) * -0.5) 0 0 calc(var(--item,46px) * -0.5);
+    transform:rotate(calc(var(--a,0) * 1deg)) translateY(calc(var(--ring,130px) * -1));
+    -webkit-tap-highlight-color:transparent;
+  }
+  .wheelItemInner {
+    position:absolute; inset:0; border-radius:50%; overflow:hidden; background:#f6e9d7;
+    transform:rotate(calc((var(--a,0) * -1 - var(--rot,0)) * 1deg));
+    box-shadow:0 4px 10px rgba(38,20,24,.42), 0 0 0 2px rgba(255,250,235,.86);
+    transition:scale .26s cubic-bezier(.2,.8,.3,1), box-shadow .26s ease;
   }
   .recordCoverThumb {
     position:absolute; z-index:2; inset:21%; border-radius:50%; overflow:hidden;
@@ -527,6 +538,55 @@
   }
   .recordCoverThumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .recordCoverThumb .coverNote { color:#fffdf8; font-size:clamp(15px,3.5vw,23px); font-weight:800; }
+  .wheelItem .recordCoverThumb { position:absolute; inset:0; border-radius:50%; box-shadow:none; }
+  .wheelItem .recordCoverThumb .coverNote { font-size:16px; }
+  .wheelItem.is-active { z-index:3; }
+  .wheelItem.is-active .wheelItemInner {
+    scale:1.22;
+    box-shadow:0 8px 18px rgba(90,40,45,.5), 0 0 0 3px rgba(255,226,158,.96), 0 0 24px rgba(255,178,116,.62);
+  }
+  .wheelItem.is-playing .wheelItemInner {
+    box-shadow:0 4px 14px rgba(90,40,45,.5), 0 0 0 3px rgba(255,255,255,.95), 0 0 22px rgba(255,144,140,.9);
+  }
+  .wheelHub {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:47%; aspect-ratio:1; border-radius:50%; z-index:4;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    padding:12px 10px 10px; text-align:center;
+    background:radial-gradient(circle at 42% 30%, #fffdf4 0%, #fff3e0 54%, #f3dcc1 100%);
+    box-shadow:0 8px 22px rgba(120,66,68,.28), inset 0 0 0 1px rgba(212,162,95,.55), inset 0 0 0 7px rgba(255,255,255,.5);
+  }
+  .wheelHub::after {
+    content:""; position:absolute; inset:-13px; border-radius:50%;
+    border:1px dashed rgba(198,148,90,.34); pointer-events:none;
+  }
+  .wheelHubCount { font-size:9.5px; letter-spacing:2px; color:#bd8a5c; font-weight:700; }
+  .wheelHubTitle {
+    max-width:100%; font-size:clamp(11.5px,2.9vw,13.5px); line-height:1.34; color:#7d4148; font-weight:800;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere;
+  }
+  .wheelHubArtist {
+    max-width:100%; font-size:10px; color:#a97b76; line-height:1.3;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .wheelHubPlay {
+    appearance:none; border:0; margin-top:5px; width:min(40px,11.5vw); height:min(40px,11.5vw);
+    border-radius:50%; cursor:pointer; color:#fff; font-size:15px; line-height:1;
+    background:linear-gradient(135deg,#ff927e,#ffb769 55%,#ff7fa2);
+    box-shadow:0 6px 15px rgba(226,120,105,.4);
+    transition:transform .16s ease;
+  }
+  .wheelHubPlay:active { transform:scale(.93); }
+  .wheelNav {
+    width:min(94vw,420px); margin:10px auto 2px; display:flex; align-items:center; justify-content:center; gap:14px;
+  }
+  .wheelNavBtn {
+    appearance:none; border:1px solid rgba(180,123,104,.32); border-radius:50%;
+    width:34px; height:34px; background:rgba(255,255,255,.6); color:#96565e;
+    font-size:17px; line-height:1; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  .wheelNavBtn:active { transform:scale(.94); }
+  .wheelNavHint { color:#a57472; font-size:11.5px; letter-spacing:.5px; }
   .recordFly {
     position:fixed; z-index:700; border-radius:50%; pointer-events:none;
     display:flex; align-items:center; justify-content:center;
@@ -547,24 +607,6 @@
     position:absolute; inset:21%; width:auto; height:auto; border-radius:50%;
     box-shadow:0 0 0 3px rgba(255,250,237,.87);
   }
-  .recordTitle {
-    width:100%; min-height:2.8em; font-size:clamp(11px,2.65vw,14px); line-height:1.4;
-    font-weight:700; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-    overflow:hidden; overflow-wrap:anywhere;
-  }
-  .recordCard:hover .vinyl, .recordCard:focus-visible .vinyl { transform:scale(1.075); box-shadow:0 14px 30px rgba(132,75,77,.32); }
-  .recordCard.playing .vinyl { box-shadow:0 0 0 3px rgba(255,250,226,.9),0 0 24px rgba(255,177,117,.75); }
-  .recordCard.wallArrive { animation:wallRecordLand .52s cubic-bezier(.2,.9,.3,1) both; }
-  @keyframes wallRecordLand {
-    from{opacity:0; transform:scale(.72) translateY(8px);}
-    to{opacity:1; transform:none;}
-  }
-  .recordCard.playing .recordCoverThumb::after {
-    content:"♪"; position:absolute; right:-13px; top:-10px; font-size:14px;
-    color:#fff; text-shadow:0 1px 5px rgba(60,30,35,.7);
-    animation:musicNotePulse .9s ease-in-out infinite;
-  }
-  @keyframes musicNotePulse { 0%,100%{transform:translateY(0);opacity:.6} 50%{transform:translateY(-5px);opacity:1} }
   .musicWallFooter { display:flex; flex-direction:column; align-items:center; gap:10px; padding:0 0 8px; }
   .musicWallFooter p { color:#a57472; font-size:12px; letter-spacing:1px; }
   .music-wall-notes { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
@@ -673,8 +715,8 @@
   @keyframes musicFinaleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
   .musicError { color:#aa666d; font-size:14px; line-height:1.8; padding:30px 12px; }
   @media (max-width:560px){
-    #recordGrid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px 10px; padding-inline:2px; }
-    .recordCard .vinyl { width:clamp(62px,19vw,88px); }
+    #wheelStage { width:min(92vw,340px,70vh); }
+    .wheelNavHint { font-size:11px; }
     .musicWallFooter p { max-width:280px; }
   }
   @media (max-width:360px){
@@ -682,8 +724,9 @@
     .wishGrid .wishCard { min-height:0; }
   }
   @media (prefers-reduced-motion: reduce){
-    .playerVinyl::before,.musicFinaleBtn,.music-wall-notes span,.recordCard.playing .recordCoverThumb::after,
-    #s5.returning .playerVinylWrap,.recordCard.wallArrive { animation:none; }
+    .playerVinyl::before,.musicFinaleBtn,.music-wall-notes span,
+    #s5.returning .playerVinylWrap { animation:none; }
+    .wheelItemInner { transition:none; }
   }
 
   /* ---------- 结尾艺术字 ---------- */
@@ -1450,12 +1493,25 @@
       <header class="musicWallHeader">
         <div class="musicEyebrow">THE 19TH BIRTHDAY RADIO</div>
         <h2 id="musicWallTitle">为你点的16首歌 · 19岁生日快乐</h2>
-        <p id="musicWallSub">先看看歌名，再选一首今晚想听的吧。</p>
+        <p id="musicWallSub">转一转下面这张唱片，把想听的那首转到最上面。</p>
         <button class="musicRestartBtn" onclick="restartExperience()">↺ 从头开始</button>
       </header>
-      <div id="recordGrid" aria-label="16首歌曲列表"></div>
+      <div id="wheelStage" tabindex="0" role="group" aria-label="旋转唱片选歌：拖动圆盘旋转，点封面直接播放">
+        <div id="recordWheel"></div>
+        <div class="wheelHub">
+          <div class="wheelHubCount" id="wheelCount">01 / 16</div>
+          <div class="wheelHubTitle" id="wheelTitle">把想听的那首转到最上面</div>
+          <div class="wheelHubArtist" id="wheelArtist"></div>
+          <button class="wheelHubPlay" id="wheelHubPlay" type="button" aria-label="播放选中的这首">▶</button>
+        </div>
+      </div>
+      <div class="wheelNav">
+        <button class="wheelNavBtn" type="button" onclick="nudgeWheel(-1)" aria-label="上一首">‹</button>
+        <span class="wheelNavHint">拖动圆盘旋转 · 点封面直接播放</span>
+        <button class="wheelNavBtn" type="button" onclick="nudgeWheel(1)" aria-label="下一首">›</button>
+      </div>
       <div class="musicWallFooter">
-        <p>点开唱片，就把这一刻调成属于你的背景音乐。</p>
+        <p>选中哪首，就把这一刻调成属于你的背景音乐。</p>
         <button class="btn ghost" onclick="leaveMusicForFinale()">去看最后的祝愿</button>
       </div>
     </div>
@@ -1494,6 +1550,7 @@
       </div>
       <button class="btn musicFinaleBtn" onclick="leaveMusicForFinale()">去看最后的祝愿</button>
       <audio id="trackAudio" preload="auto" playsinline></audio>
+      <audio id="prefetchAudio" preload="none" aria-hidden="true"></audio>
     </div>
   </section>
 
@@ -2393,11 +2450,209 @@ function openMusicWall(){
   }, 2000);
 }
 
+/* ---------- 旋转唱片选歌盘 ---------- */
+let wheelRot = 0, wheelTarget = 0, wheelRAF = 0, wheelIndex = -1, wheelTapMoved = 0, wheelPrefetchIndex = -1;
+
+function wheelTracks(){
+  return Array.isArray(window.MUSIC_TRACKS) ? window.MUSIC_TRACKS : [];
+}
+
+function wheelStepDeg(){
+  const n = wheelTracks().length;
+  return n ? 360 / n : 22.5;
+}
+
+function wheelIndexAt(rot){
+  const n = wheelTracks().length;
+  if(!n) return 0;
+  const step = 360 / n;
+  return ((Math.round(-rot / step) % n) + n) % n;
+}
+
+function updateWheelHub(index){
+  const tracks = wheelTracks();
+  const track = tracks[index];
+  if(!track) return;
+  const count = document.getElementById('wheelCount');
+  if(count) count.textContent = String(index + 1).padStart(2,"0") + " / " + String(tracks.length).padStart(2,"0");
+  const title = document.getElementById('wheelTitle');
+  if(title) title.textContent = track.title || ("第" + (index + 1) + "首");
+  const artist = document.getElementById('wheelArtist');
+  if(artist) artist.textContent = track.artist || "";
+  const items = document.querySelectorAll('.wheelItem');
+  for(let i = 0; i < items.length; i++){
+    items[i].classList.toggle('is-active', Number(items[i].dataset.trackIndex) === index);
+  }
+}
+
+function applyWheelRot(value){
+  const disc = document.getElementById('recordWheel');
+  if(!disc) return;
+  wheelRot = value;
+  disc.style.setProperty('--rot', value.toFixed(2));
+  const index = wheelIndexAt(value);
+  if(index !== wheelIndex){
+    wheelIndex = index;
+    updateWheelHub(index);
+  }
+}
+
+function animateWheel(){
+  if(wheelRAF) return;
+  const tick = function(){
+    const diff = wheelTarget - wheelRot;
+    if(Math.abs(diff) < .05){
+      wheelRAF = 0;
+      applyWheelRot(wheelTarget);
+      return;
+    }
+    applyWheelRot(wheelRot + diff * .2);
+    wheelRAF = requestAnimationFrame(tick);
+  };
+  wheelRAF = requestAnimationFrame(tick);
+}
+
+function setWheelTarget(rot){
+  wheelTarget = rot;
+  if(prefersReducedMotion){
+    if(wheelRAF){ cancelAnimationFrame(wheelRAF); wheelRAF = 0; }
+    applyWheelRot(rot);
+    return;
+  }
+  animateWheel();
+}
+
+function snapWheel(){
+  const step = wheelStepDeg();
+  setWheelTarget(Math.round(wheelRot / step) * step);
+}
+
+function rotateWheelTo(index, animate){
+  const step = wheelStepDeg();
+  const turns = Math.round((wheelRot + index * step) / 360);
+  const target = 360 * turns - index * step;
+  if(animate === false){
+    if(wheelRAF){ cancelAnimationFrame(wheelRAF); wheelRAF = 0; }
+    wheelTarget = target;
+    applyWheelRot(target);
+    return;
+  }
+  setWheelTarget(target);
+}
+
+function nudgeWheel(dir){
+  const n = wheelTracks().length;
+  if(!n) return;
+  const next = ((wheelIndex + dir) % n + n) % n;
+  rotateWheelTo(next, true);
+}
+window.nudgeWheel = nudgeWheel;
+
+function layoutWheel(){
+  const stage = document.getElementById('wheelStage');
+  const disc = document.getElementById('recordWheel');
+  if(!stage || !disc) return;
+  const width = stage.clientWidth || Math.min(window.innerWidth * .9, 360);
+  if(!width) return;
+  const item = Math.max(36, Math.min(50, width * .132));
+  const ring = width / 2 - item / 2 - 8;
+  [stage, disc].forEach(el=>{
+    el.style.setProperty('--item', item.toFixed(1) + 'px');
+    el.style.setProperty('--ring', ring.toFixed(1) + 'px');
+  });
+}
+
+function playWheelIndex(index, source){
+  if(!wheelTracks()[index]) return;
+  rotateWheelTo(index, true);
+  openMusicTrack(index, source || document.querySelector('.wheelItem[data-track-index="' + index + '"]'));
+}
+
+function prefetchNextTrack(index){
+  const tracks = wheelTracks();
+  if(tracks.length < 2) return;
+  const conn = navigator.connection || {};
+  if(conn.saveData || /(^|-)2g/.test(conn.effectiveType || "")) return;
+  const nextIndex = (index + 1) % tracks.length;
+  if(wheelPrefetchIndex === nextIndex) return;
+  const track = tracks[nextIndex];
+  const pre = document.getElementById('prefetchAudio');
+  if(!track || !track.file || !pre) return;
+  wheelPrefetchIndex = nextIndex;
+  try{
+    pre.preload = "auto";
+    pre.src = track.file;
+    pre.load();
+  }catch(err){}
+}
+
+function bindWheelStage(){
+  const stage = document.getElementById('wheelStage');
+  if(!stage || stage.dataset.bound) return;
+  stage.dataset.bound = "1";
+  let dragging = false, pointerId = null, prevAngle = 0, startX = 0, startY = 0, moved = 0;
+
+  const angleAt = function(x, y){
+    const rect = stage.getBoundingClientRect();
+    return Math.atan2(y - (rect.top + rect.height / 2), x - (rect.left + rect.width / 2)) * 180 / Math.PI;
+  };
+
+  const onMove = function(e){
+    if(!dragging || e.pointerId !== pointerId) return;
+    moved = Math.max(moved, Math.hypot(e.clientX - startX, e.clientY - startY));
+    const rect = stage.getBoundingClientRect();
+    const radius = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
+    const angle = angleAt(e.clientX, e.clientY);
+    if(radius < rect.width * .16){ prevAngle = angle; return; }
+    let delta = angle - prevAngle;
+    if(delta > 180) delta -= 360;
+    if(delta < -180) delta += 360;
+    prevAngle = angle;
+    wheelTarget = wheelRot + delta;
+    if(wheelRAF){ cancelAnimationFrame(wheelRAF); wheelRAF = 0; }
+    applyWheelRot(wheelTarget);
+  };
+
+  const onEnd = function(e){
+    if(!dragging) return;
+    if(e && e.pointerId !== pointerId) return;
+    dragging = false;
+    pointerId = null;
+    wheelTapMoved = moved;
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onEnd);
+    window.removeEventListener('pointercancel', onEnd);
+    snapWheel();
+  };
+
+  stage.addEventListener('pointerdown', function(e){
+    if(e.target.closest && e.target.closest('.wheelHub')) return;
+    if(dragging) return;
+    dragging = true;
+    pointerId = e.pointerId;
+    moved = 0;
+    wheelTapMoved = 0;
+    startX = e.clientX;
+    startY = e.clientY;
+    prevAngle = angleAt(e.clientX, e.clientY);
+    if(wheelRAF){ cancelAnimationFrame(wheelRAF); wheelRAF = 0; }
+    wheelTarget = wheelRot;
+    window.addEventListener('pointermove', onMove, {passive:true});
+    window.addEventListener('pointerup', onEnd);
+    window.addEventListener('pointercancel', onEnd);
+  });
+
+  stage.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); nudgeWheel(-1); }
+    else if(e.key === 'ArrowRight'){ e.preventDefault(); nudgeWheel(1); }
+  });
+}
+
 function initMusicWall(){
   const s5 = document.getElementById('s5');
-  const grid = document.getElementById('recordGrid');
-  const tracks = Array.isArray(window.MUSIC_TRACKS) ? window.MUSIC_TRACKS : [];
-  if(!s5 || !grid) return;
+  const disc = document.getElementById('recordWheel');
+  const tracks = wheelTracks();
+  if(!s5 || !disc) return;
   window.musicGiftActive = true;
   skyPaused = true;
   document.body.classList.add('music-mode');
@@ -2406,55 +2661,73 @@ function initMusicWall(){
   const bgmBtn = document.getElementById('bgmBtn');
   if(bgmBtn) bgmBtn.textContent = "🔇";
   if(musicWallInited){
+    layoutWheel();
     markCurrentRecord();
+    updateWheelHub(wheelIndex < 0 ? 0 : wheelIndex);
     return;
   }
   musicWallInited = true;
-  grid.innerHTML = "";
+  disc.innerHTML = "";
   if(!tracks.length){
-    grid.innerHTML = '<div class="musicError">音乐清单没有加载成功，请检查 music/playlist.js。</div>';
+    disc.innerHTML = '<div class="musicError">音乐清单没有加载成功，请检查 music/playlist.js。</div>';
     return;
   }
-  document.getElementById('musicWallTitle').textContent = `为你点的${tracks.length}首歌 · 19岁生日快乐`;
-  document.getElementById('playerCounter').textContent = `第 1 / ${tracks.length} 首`;
+  document.getElementById('musicWallTitle').textContent = '为你点的' + tracks.length + '首歌 · 19岁生日快乐';
+  document.getElementById('playerCounter').textContent = '第 1 / ' + tracks.length + ' 首';
+  const step = 360 / tracks.length;
   const frag = document.createDocumentFragment();
-  tracks.forEach((track,index)=>{
+  tracks.forEach(function(track, index){
     const colors = MUSIC_COLORS[index % MUSIC_COLORS.length];
-    const button = document.createElement('button');
-    button.type = "button";
-    button.className = "recordCard";
-    button.dataset.trackIndex = String(index);
-    button.style.setProperty("--c1",colors[0]);
-    button.style.setProperty("--c2",colors[1]);
-    const vinyl = document.createElement('span');
-    vinyl.className = "vinyl";
-    vinyl.appendChild(createRecordCover(track));
-    const title = document.createElement('span');
-    title.className = "recordTitle";
-    title.textContent = track.title || `第${index + 1}首`;
-    button.append(vinyl,title);
-    button.addEventListener('click',()=>openMusicTrack(index, button));
-    frag.appendChild(button);
+    const item = document.createElement('button');
+    item.type = "button";
+    item.className = "wheelItem";
+    item.dataset.trackIndex = String(index);
+    item.style.setProperty("--a", (index * step).toFixed(3));
+    item.style.setProperty("--c1", colors[0]);
+    item.style.setProperty("--c2", colors[1]);
+    item.setAttribute("aria-label", "第" + (index + 1) + "首 " + (track.title || ""));
+    const inner = document.createElement("span");
+    inner.className = "wheelItemInner";
+    inner.appendChild(createRecordCover(track));
+    item.appendChild(inner);
+    item.addEventListener('click', function(){
+      if(wheelTapMoved > 6){ wheelTapMoved = 0; return; }
+      playWheelIndex(index, item);
+    });
+    frag.appendChild(item);
   });
-  grid.appendChild(frag);
+  disc.appendChild(frag);
+  wheelIndex = -1;
+  layoutWheel();
+  applyWheelRot(0);
+  bindWheelStage();
+  const hubPlay = document.getElementById('wheelHubPlay');
+  if(hubPlay) hubPlay.addEventListener('click', function(){ playWheelIndex(wheelIndex < 0 ? 0 : wheelIndex, null); });
+  if(!window.wheelResizeBound){
+    window.wheelResizeBound = true;
+    addEventListener('resize', function(){
+      const scene = document.getElementById('s5');
+      if(scene && scene.classList.contains('active')) layoutWheel();
+    });
+  }
   trackAudio.addEventListener('timeupdate', updateMusicProgress);
-  trackAudio.addEventListener('loadedmetadata', ()=>{
+  trackAudio.addEventListener('loadedmetadata', function(){
     const duration = Number.isFinite(trackAudio.duration) ? trackAudio.duration : 0;
     document.getElementById('musicProgress').max = String(duration || 100);
     document.getElementById('musicDuration').textContent = formatMusicTime(duration);
   });
-  trackAudio.addEventListener('play', ()=>setMusicPlaying(true));
-  trackAudio.addEventListener('pause', ()=>setMusicPlaying(false));
-  trackAudio.addEventListener('ended', ()=>changeTrack(1));
-  setInterval(()=>{ if(!trackAudio.paused && !document.hidden) updateMusicProgress(); }, 250);
-  document.getElementById('musicProgress').addEventListener('input', e=>{
+  trackAudio.addEventListener('play', function(){ setMusicPlaying(true); });
+  trackAudio.addEventListener('pause', function(){ setMusicPlaying(false); });
+  trackAudio.addEventListener('ended', function(){ changeTrack(1); });
+  setInterval(function(){ if(!trackAudio.paused && !document.hidden) updateMusicProgress(); }, 250);
+  document.getElementById('musicProgress').addEventListener('input', function(e){
     if(Number.isFinite(trackAudio.duration)) trackAudio.currentTime = Number(e.target.value);
   });
   if('mediaSession' in navigator){
-    navigator.mediaSession.setActionHandler('play', ()=>trackAudio.play().catch(()=>{}));
-    navigator.mediaSession.setActionHandler('pause', ()=>trackAudio.pause());
-    navigator.mediaSession.setActionHandler('previoustrack', ()=>changeTrack(-1));
-    navigator.mediaSession.setActionHandler('nexttrack', ()=>changeTrack(1));
+    navigator.mediaSession.setActionHandler('play', function(){ trackAudio.play().catch(function(){}); });
+    navigator.mediaSession.setActionHandler('pause', function(){ trackAudio.pause(); });
+    navigator.mediaSession.setActionHandler('previoustrack', function(){ changeTrack(-1); });
+    navigator.mediaSession.setActionHandler('nexttrack', function(){ changeTrack(1); });
   }
 }
 
@@ -2568,8 +2841,8 @@ function updatePlayerCover(track,index){
 }
 
 function markCurrentRecord(){
-  document.querySelectorAll('.recordCard').forEach(card=>{
-    card.classList.toggle('playing', Number(card.dataset.trackIndex) === currentTrackIndex && !trackAudio.paused);
+  document.querySelectorAll('.wheelItem').forEach(item=>{
+    item.classList.toggle('is-playing', Number(item.dataset.trackIndex) === currentTrackIndex && !trackAudio.paused);
   });
 }
 
@@ -2635,8 +2908,8 @@ function openMusicTrack(index, sourceButton){
   if(!tracks[index]) return;
   const s5 = document.getElementById('s5');
   if(s5.classList.contains('opening')) return;
-  const sourceVinyl = sourceButton && sourceButton.querySelector('.vinyl');
-  const from = sourceVinyl ? sourceVinyl.getBoundingClientRect() : null;
+  const sourceCover = sourceButton && (sourceButton.querySelector('.recordCoverThumb') || sourceButton.querySelector('.wheelItemInner'));
+  const from = sourceCover ? sourceCover.getBoundingClientRect() : null;
   const flyingRecord = createRecordFly(from,index);
   const sameTrack = currentTrackIndex === index && !!trackAudio.getAttribute('src');
   currentTrackIndex = index;
@@ -2699,6 +2972,7 @@ function setMusicPlaying(playing){
   const bgmBtn = document.getElementById('bgmBtn');
   if(bgmBtn && window.musicGiftActive) bgmBtn.textContent = playing ? "🎵" : "🔇";
   markCurrentRecord();
+  if(playing && currentTrackIndex >= 0) setTimeout(()=>prefetchNextTrack(currentTrackIndex), 4000);
 }
 
 function toggleGiftMusic(){
@@ -2706,6 +2980,7 @@ function toggleGiftMusic(){
   if(!tracks.length) return;
   if(currentTrackIndex < 0){
     document.getElementById('s5').classList.add('player-active');
+    rotateWheelTo(0, false);
     loadMusicTrack(0,true);
     return;
   }
@@ -2729,15 +3004,9 @@ function returnToRecordWall(){
     if(settled) return;
     settled = true;
     s5.classList.remove('returning','player-active');
+    layoutWheel();
+    if(currentTrackIndex >= 0) rotateWheelTo(currentTrackIndex, false);
     markCurrentRecord();
-    const button = document.querySelector(`.recordCard[data-track-index="${currentTrackIndex}"]`);
-    if(button){
-      button.scrollIntoView({block:"center",behavior:"auto"});
-      button.classList.remove('wallArrive');
-      void button.offsetWidth;
-      button.classList.add('wallArrive');
-      setTimeout(()=>button.classList.remove('wallArrive'),560);
-    }
   };
   s5.classList.add('returning');
   setTimeout(finish,380);
