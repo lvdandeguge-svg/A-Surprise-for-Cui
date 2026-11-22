@@ -380,30 +380,29 @@
     18%{opacity:1; transform:translateX(-50%) translateY(0) scale(1)}
     75%{opacity:1} 100%{opacity:0; transform:translateX(-50%) translateY(-20px) scale(1)} }
 
-  /* ---------- 第4幕 唱片封套 ---------- */
+  /* ---------- 第4幕 礼物封套 + 兔子 ---------- */
   #s4 .sleeve {
-    position:relative; width:min(64vw,236px); aspect-ratio:1 / 1; margin:2.6vh auto 0;
+    position:relative; width:min(66vw,280px); aspect-ratio:1 / 1; margin:2.6vh auto 0;
     cursor:pointer; outline:none; transition:transform .4s cubic-bezier(.2,.8,.3,1);
   }
   #s4 .sleeve:active { transform:scale(.975); }
   #s4 .sleeve:focus-visible { outline:2px dashed rgba(216,166,84,.85); outline-offset:7px; border-radius:18px; }
   #s4 .sleeve.is-open { cursor:default; }
-  .sleeveDisc {
-    position:absolute; inset:0; border-radius:50%;
-    background:
-      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.05) 0 1px, rgba(0,0,0,0) 1px 4px),
-      radial-gradient(circle at 50% 50%, #f7e9cb 0 15.5%, #c8a05f 15.5% 17%, #2a2321 17% 100%);
-    box-shadow:0 12px 26px rgba(80,45,38,.32), inset 0 0 0 2px rgba(255,255,255,.05);
-    display:flex; align-items:center; justify-content:center;
+  .sleeveBunnyWrap { position:absolute; inset:0; }
+  .sleeveBunny {
+    display:block; width:100%; height:100%; object-fit:contain;
+    filter:drop-shadow(0 16px 28px rgba(150,85,95,.26));
   }
-  .sleeveDisc i {
-    font-style:normal; font-weight:800; font-size:14px; color:#8a5a3a; letter-spacing:1px;
-    opacity:0; transition:opacity .6s ease .55s;
+  @keyframes bunnyAppear {
+    0% { opacity:0; transform:scale(.78) translateY(14px); }
+    62% { opacity:1; transform:scale(1.035) translateY(-3px); }
+    100% { opacity:1; transform:none; }
   }
-  #s4 .sleeve.is-open .sleeveDisc i { opacity:1; }
-  @keyframes sleeveSpin { to { transform:rotate(360deg); } }
-  #s4 .sleeve.is-open .sleeveDisc { animation:sleeveSpin 7s linear infinite; }
-  @media (prefers-reduced-motion: reduce){ #s4 .sleeve.is-open .sleeveDisc { animation:none; } }
+  #s4 .sleeve.is-open .sleeveBunnyWrap { animation:bunnyAppear .95s cubic-bezier(.2,1.1,.35,1) .22s both; }
+  #s4 .sleeve.is-open .sleeveBunny { animation:float 3.8s ease-in-out 1.3s infinite; }
+  @media (prefers-reduced-motion: reduce){
+    #s4 .sleeve.is-open .sleeveBunnyWrap, #s4 .sleeve.is-open .sleeveBunny { animation:none; }
+  }
   .sleeveCover {
     position:absolute; inset:0; border-radius:16px; overflow:hidden;
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
@@ -1421,7 +1420,7 @@
          onclick="openSleeve()"
          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSleeve();}"
          aria-label="点开封套，看看里面是什么">
-      <div class="sleeveDisc"><i>16</i></div>
+      <div class="sleeveBunnyWrap"><img class="sleeveBunny" src="assets/bunny.png" alt="一只正在大笑的兔子"></div>
       <div class="sleeveCover">
         <span class="sleeveEyebrow">FOR YOU</span>
         <span class="sleeveBig">16</span>
@@ -1431,8 +1430,8 @@
     </div>
     <div id="letterLines">
       <p class="letterLine">本来想送你一件能拿在手里的东西，</p>
-      <p class="letterLine">可东西会旧、会丢，也会被收进抽屉。</p>
-      <p class="letterLine">所以换成 16 首歌：想听的时候点开，它就在。</p>
+      <p class="letterLine">可它只能待在一个地方，出门的时候就带不走。</p>
+      <p class="letterLine">所以换成 16 首歌：耳机一戴，它就在。</p>
     </div>
     <button class="btn letterBtn" id="letterBtn" onclick="openMusicWall()">去听这 16 首 🎧</button>
   </section>
@@ -1721,7 +1720,7 @@ function enterSealFromInvite(){
 /* ---------- 第1幕 问答 ---------- */
 const QUIZ = [
   { q:"猜猜,这个网页是谁做的?",
-    opts:["某个路过的外星人","你的一个朋友","提前上班的圣诞老人","你的手机中了病毒"],
+    opts:["某个路过的外星人","你的朋友和一只大肥鱼","提前上班的圣诞老人","你的手机中了病毒"],
     ans:1,
     wrong:["外星人还在赶来的路上~","再想想,是谁这么用心?","圣诞老人12月才上班哦","病毒可画不出这么好看的页面"] },
   { q:"手机贴上卡片的那一秒,你的第一反应是?",
