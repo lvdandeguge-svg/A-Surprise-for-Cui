@@ -388,20 +388,25 @@
   #s4 .sleeve:active { transform:scale(.975); }
   #s4 .sleeve:focus-visible { outline:2px dashed rgba(216,166,84,.85); outline-offset:7px; border-radius:18px; }
   #s4 .sleeve.is-open { cursor:default; }
-  .sleeveBunnyWrap { position:absolute; inset:0; }
+  .sleeveStage { position:absolute; inset:0; overflow:hidden; }
+  .sleeveBunnyWrap { position:absolute; inset:0; opacity:0; }
   .sleeveBunny {
     display:block; width:100%; height:100%; object-fit:contain;
     filter:drop-shadow(0 16px 28px rgba(150,85,95,.26));
   }
-  @keyframes bunnyAppear {
-    0% { opacity:0; transform:scale(.78) translateY(14px); }
-    62% { opacity:1; transform:scale(1.035) translateY(-3px); }
+  /* 封套掀开后，兔子从里面升上来 */
+  @keyframes bunnyOut {
+    0%   { opacity:0; transform:translateY(46%) scale(.94); }
+    18%  { opacity:1; }
+    58%  { transform:translateY(-2.5%) scale(1.015); }
+    80%  { transform:translateY(0) scale(1); }
     100% { opacity:1; transform:none; }
   }
-  #s4 .sleeve.is-open .sleeveBunnyWrap { animation:bunnyAppear .95s cubic-bezier(.2,1.1,.35,1) .22s both; }
-  #s4 .sleeve.is-open .sleeveBunny { animation:float 3.8s ease-in-out 1.3s infinite; }
+  #s4 .sleeve.is-open .sleeveBunnyWrap { animation:bunnyOut 1.05s cubic-bezier(.22,.9,.28,1) .5s both; }
+  #s4 .sleeve.is-open .sleeveBunny { animation:float 3.8s ease-in-out 1.8s infinite; }
   @media (prefers-reduced-motion: reduce){
-    #s4 .sleeve.is-open .sleeveBunnyWrap, #s4 .sleeve.is-open .sleeveBunny { animation:none; }
+    #s4 .sleeve.is-open .sleeveBunnyWrap { opacity:1; animation:none; }
+    #s4 .sleeve.is-open .sleeveBunny { animation:none; }
   }
   .sleeveCover {
     position:absolute; inset:0; border-radius:16px; overflow:hidden;
@@ -410,7 +415,7 @@
     border:1px solid rgba(216,166,84,.66);
     box-shadow:0 18px 40px rgba(170,100,80,.24), inset 0 1px 0 rgba(255,255,255,.92);
     transform-origin:left center; backface-visibility:hidden;
-    transition:transform .95s cubic-bezier(.3,1.05,.4,1), opacity .8s ease .1s;
+    transition:transform 1s cubic-bezier(.3,1.05,.4,1), opacity .5s ease .66s;
   }
   .sleeveCover::after {
     content:""; position:absolute; inset:9px; border-radius:11px;
@@ -1413,14 +1418,14 @@
     <div id="cakeBtnBox"></div>
   </section>
 
-  <!-- 第4幕 没有盒子的礼物:一张唱片封套 -->
+  <!-- 第4幕 没有盒子的礼物:一张唱片封套，掀开蹦出一只兔子 -->
   <section class="scene" id="s4">
     <h2 class="glow">一份没有盒子的礼物</h2>
     <div class="sleeve" id="sleeveBox" role="button" tabindex="0"
          onclick="openSleeve()"
          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSleeve();}"
          aria-label="点开封套，看看里面是什么">
-      <div class="sleeveBunnyWrap"><img class="sleeveBunny" src="assets/bunny.png" alt="一只正在大笑的兔子"></div>
+      <div class="sleeveStage"><div class="sleeveBunnyWrap"><img class="sleeveBunny" src="assets/bunny.png" alt="一只正在大笑的兔子"></div></div>
       <div class="sleeveCover">
         <span class="sleeveEyebrow">FOR YOU</span>
         <span class="sleeveBig">16</span>
@@ -1429,9 +1434,9 @@
       <div class="sleeveTap" id="sleeveTap">点一下封套</div>
     </div>
     <div id="letterLines">
-      <p class="letterLine">本来想送你一件能拿在手里的东西，</p>
-      <p class="letterLine">可它只能待在一个地方，出门的时候就带不走。</p>
-      <p class="letterLine">所以换成 16 首歌：耳机一戴，它就在。</p>
+      <p class="letterLine">本来想把歌塞进借来的音响里，</p>
+      <p class="letterLine">算了一下，运费比音响还贵。</p>
+      <p class="letterLine">所以给你把它挂网上了……</p>
     </div>
     <button class="btn letterBtn" id="letterBtn" onclick="openMusicWall()">去听这 16 首 🎧</button>
   </section>
