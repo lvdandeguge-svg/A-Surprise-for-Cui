@@ -1723,6 +1723,8 @@ const KEY = "birthday-progress-v3";
 function go(i){
   document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+i).classList.add('active');
+  // 背景音乐：第5幕（音乐转盘）之前放一半，之后恢复满音量
+  if(typeof window.__bgmLevel === 'function') window.__bgmLevel(i >= 5 ? 1 : 0.5);
   const prev = document.getElementById('scenePrevBtn');
   if(prev) prev.hidden = i === 1;
   try { localStorage.setItem(KEY, i); } catch(e){}
@@ -3125,12 +3127,69 @@ function finaleStart(){
   var bgm = document.getElementById('bgmAudio');
   var btn = document.getElementById('bgmBtn');
   var started = false, muted = false;
-  bgm.volume = 0.35;
+  // 以 0.35 的听感作为「100%」。第5幕（音乐转盘）之前 50%，之后 100%。
+  var FULL = 0.35, level = 0.5;
+  var actx = null, gainNode = null, useGain = false, fadeTimer = null;
+
+  function canSetVolume(){
+    try {
+      var keep = bgm.volume;
+      bgm.volume = 0.42;
+      var ok = Math.abs(bgm.volume - 0.42) < 0.01;
+      bgm.volume = keep;
+      return ok;
+    } catch(e){ return false; }
+  }
+  // iOS Safari 会忽略 <audio>.volume，这种情况改用 Web Audio 增益实现真正的 50% / 100%
+  if(!canSetVolume()){
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(AC){
+        actx = new AC();
+        var src = actx.createMediaElementSource(bgm);
+        gainNode = actx.createGain();
+        src.connect(gainNode);
+        gainNode.connect(actx.destination);
+        gainNode.gain.value = FULL * level;
+        useGain = true;
+        bgm.volume = 1;
+      }
+    } catch(e){ useGain = false; actx = null; gainNode = null; }
+  }
+  if(!useGain) bgm.volume = FULL * level;
+
+  function applyVolume(v, smooth){
+    var target = Math.max(0, Math.min(1, FULL * v));
+    if(useGain && gainNode && actx){
+      try {
+        if(smooth && gainNode.gain.setTargetAtTime) gainNode.gain.setTargetAtTime(target, actx.currentTime, 0.18);
+        else gainNode.gain.value = target;
+      } catch(e){}
+      return;
+    }
+    if(fadeTimer){ clearInterval(fadeTimer); fadeTimer = null; }
+    if(!smooth){ bgm.volume = target; return; }
+    var from = bgm.volume, t0 = Date.now(), dur = 900;
+    fadeTimer = setInterval(function(){
+      var k = Math.min(1, (Date.now() - t0) / dur);
+      bgm.volume = from + (target - from) * k;
+      if(k >= 1){ clearInterval(fadeTimer); fadeTimer = null; }
+    }, 40);
+  }
+
+  // 0.5 = 一半音量（第5幕之前）；1 = 满音量（第5幕及之后）
+  window.__bgmLevel = function(v){
+    if(v === level) return;
+    level = v;
+    applyVolume(level, true);
+  };
+
   btn.textContent = '🔇';
 
   function load(){ if (!bgm.getAttribute('src')) bgm.setAttribute('src', 'Dear%20John.mp3'); }
   function play(){
     load();
+    if(actx && actx.state === 'suspended' && actx.resume) actx.resume().catch(function(){});
     var p = bgm.play();
     if (p && p.then) p.then(function(){ started = true; if (!muted) btn.textContent = '🎵'; }).catch(function(){});
   }
