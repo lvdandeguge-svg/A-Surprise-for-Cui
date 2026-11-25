@@ -731,8 +731,8 @@
     .musicWallFooter p { max-width:280px; }
   }
   @media (max-width:360px){
-    .wishGrid { grid-template-columns:1fr; width:min(90vw,320px); gap:10px; margin-bottom:22px; }
-    .wishGrid .wishCard { min-height:0; }
+    .wishGrid { width:min(90vw,320px); gap:10px; margin-bottom:20px; }
+    .wishGrid .wishCard { padding:24px 16px 16px; font-size:14px; letter-spacing:.4px; }
   }
   @media (prefers-reduced-motion: reduce){
     .playerVinyl::before,.musicFinaleBtn,.music-wall-notes span,
@@ -744,31 +744,27 @@
   #fx { position:fixed; inset:0; z-index:40; pointer-events:none; display:none; }
   #finaleLines { line-height:2.5; font-size:17px; width:100%; max-width:430px; margin:0 auto; color:#8a4a56; font-weight:500; }
   .wishGrid {
-    display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px;
-    width:min(92vw,430px); margin:0 auto 28px; text-align:left;
+    display:grid; grid-template-columns:1fr; gap:12px;
+    width:min(92vw,412px); margin:0 auto 26px; text-align:center;
   }
   .wishGrid .wishCard {
-    position:relative; min-height:104px; padding:25px 14px 14px 17px;
-    border-radius:18px; border:1px solid rgba(183,120,87,.24);
-    background:linear-gradient(145deg,rgba(255,253,246,.92),rgba(255,238,220,.82));
-    box-shadow:0 9px 24px rgba(140,78,73,.12),inset 0 1px 0 rgba(255,255,255,.82);
-    font-size:14.5px; line-height:1.82; color:#87505a;
+    position:relative; min-height:0; padding:26px 22px 19px;
+    border-radius:16px; border:1px solid rgba(183,120,87,.22);
+    background:linear-gradient(145deg,rgba(255,253,246,.94),rgba(255,238,220,.84));
+    box-shadow:0 8px 20px rgba(140,78,73,.1),inset 0 1px 0 rgba(255,255,255,.86);
+    font-size:15px; line-height:1.72; letter-spacing:.6px; color:#87505a;
   }
   .wishGrid .wishCard::before {
-    content:"✦"; position:absolute; left:15px; top:7px;
-    color:#d69b57; font-size:11px; opacity:.85;
+    content:"✦"; position:absolute; left:50%; top:7px; transform:translateX(-50%);
+    color:#d69b57; font-size:10px; opacity:.85; letter-spacing:0;
   }
   .wishGrid .wishCard:nth-child(2) {
-    background:linear-gradient(145deg,rgba(255,248,249,.94),rgba(255,224,225,.8));
-    border-color:rgba(201,126,139,.24);
+    background:linear-gradient(145deg,rgba(255,248,249,.95),rgba(255,224,225,.82));
+    border-color:rgba(201,126,139,.22);
   }
   .wishGrid .wishCard:nth-child(3) {
-    background:linear-gradient(145deg,rgba(250,255,247,.94),rgba(226,241,220,.82));
-    border-color:rgba(136,170,123,.24);
-  }
-  .wishGrid .wishCard:nth-child(4) {
-    background:linear-gradient(145deg,rgba(249,250,255,.94),rgba(230,226,246,.84));
-    border-color:rgba(145,132,183,.24);
+    background:linear-gradient(145deg,rgba(250,255,247,.95),rgba(226,241,220,.84));
+    border-color:rgba(136,170,123,.22);
   }
   #finaleLines .birthdayWish {
     margin:0 auto; max-width:360px; line-height:2; text-align:center;
@@ -1573,7 +1569,6 @@
         <div class="ln wishCard">愿你喜欢的歌,永远有下一首;</div>
         <div class="ln wishCard">愿你走的路,都有暖光引路;</div>
         <div class="ln wishCard">愿快乐像今天的风,不请自来。</div>
-        <div class="ln wishCard">世界很大,而19岁的你,才刚刚开始发光。</div>
       </div>
       <div class="ln shimmer birthdayWish">生日快乐,不止今天。🎂</div>
     </div>
@@ -3119,7 +3114,7 @@ function finaleStart(){
       ln.classList.add('go');
       ln.querySelectorAll('.ch').forEach((c,ci)=> c.style.animationDelay = (ci*.07)+"s");
     }, delay);
-    delay += 1500;
+    delay += 1150;
   });
   setTimeout(()=>document.getElementById('endMark').classList.add('in'), delay + 1600);
   setTimeout(()=>document.getElementById('footBox').classList.add('in'), delay + 2600);
